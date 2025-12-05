@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Menu() {
   return (
-    <main className="w-full h-screen bg-fixed bg-cover bg-center bg-[url('/img/sunny-bg-with-sunicon.svg')]">
+    <main className="w-full h-screen bg-fixed bg-fixred bg-center bg-[url('/img/sunny-bg-with-sunicon.svg')]">
       {/* logo */}
       <div className="w-full flex items-center justify-center pt-5">
         <Image
@@ -16,7 +16,7 @@ export default function Menu() {
       </div>
 
       {/* menu */}
-      <section className="grid grid-cols-1 gap-5 mt-50 justify-items-center">
+      <section className="grid grid-cols-1 gap-5 mt-45 justify-items-center">
         <Link
           href="/app/FAQ#databehandling"
           className="w-80 h-36 bg-white/95 rounded-2xl flex items-center justify-center drop-shadow-lg"

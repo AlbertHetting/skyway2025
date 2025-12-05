@@ -26,11 +26,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex items-center justify-center min-h-screen bg-gray-100`}
       >
-        <header></header>
-        {children}
-        <footer className="fixed bottom-5 left-0 w-full z-50">{<Nav />}</footer>
+        {/* Mobile container */}
+        <div className="w-[393px] h-[852px] relative overflow-hidden bg-white border border-gray-300 shadow-lg">
+          {/* Header (optional) */}
+          <header className="absolute top-0 left-0 w-full z-10">
+            {/* You can place a header here if needed */}
+          </header>
+
+          {/* Main content */}
+          <main className="h-full w-full pb-24">{children}</main>
+
+          {/* Footer Nav */}
+          <footer className="absolute bottom-5 left-0 w-full z-20">
+            <Nav />
+          </footer>
+        </div>
       </body>
     </html>
   );
