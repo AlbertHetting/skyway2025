@@ -30,7 +30,7 @@ export default function RootLayout({
       >
         <header></header>
         {children}
-        <footer>{<Nav />}</footer>
+        <footer className="fixed bottom-5 left-0 w-full z-50">{<Nav />}</footer>
       </body>
     </html>
   );
