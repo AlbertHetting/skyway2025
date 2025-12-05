@@ -3,10 +3,35 @@ import Image from "next/image";
 
 export default function Nav() {
   return (
-    <nav>
-      <Link href={"/app/splash"}>
-        <Image></Image>
-        <h1>Nav test</h1>
+    <nav className="flex flex-row justify-center gap-20">
+      <Link href="/app/widgets">
+        <Image
+          src="/img/widgets-icon.svg"
+          alt="Widget"
+          width={50}
+          height={50}
+          className="drop-shadow-lg"
+        />
+      </Link>
+
+      <Link href="/app/menu">
+        <Image
+          src="/img/move-widget-icon.svg"
+          alt="Widget"
+          width={50}
+          height={50}
+          className="drop-shadow-lg"
+        />
+      </Link>
+
+      <Link href="/app/menu">
+        <Image
+          src="/img/burger-menu-icon.svg"
+          alt="Widget"
+          width={50}
+          height={50}
+          className="drop-shadow-lg"
+        />
       </Link>
     </nav>
   );

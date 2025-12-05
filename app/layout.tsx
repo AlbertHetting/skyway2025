@@ -20,17 +20,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative overflow-hidden bg-gray-100`}
       >
-        <header></header>
-        {children}
-        <footer>{<Nav />}</footer>
+        {/* Main content scrollable */}
+        <main className="min-h-screen w-full overflow-auto pb-24">
+          {children}
+        </main>
+
+        {/* Navbar fixed at bottom */}
+        <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 bg-white/80 backdrop-blur-sm">
+          <Nav />
+        </footer>
       </body>
     </html>
   );
