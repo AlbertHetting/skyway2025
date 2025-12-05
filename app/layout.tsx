@@ -20,26 +20,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex items-center justify-center min-h-screen bg-gray-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex items-center justify-center min-h-screen overflow-hidden bg-gray-100`}
       >
-        {/* Mobile container */}
-        <div className="w-[393px] h-[852px] relative overflow-hidden bg-white border border-gray-300 shadow-lg">
-          {/* Header (optional) */}
-          <header className="absolute top-0 left-0 w-full z-10">
-            {/* You can place a header here if needed */}
-          </header>
+        <div className="w-full h-full lg:w-[393px] lg:h-[852px] relative overflow-hidden bg-white border lg:border-gray-300 lg:shadow-lg">
+          <div className="fixed inset-0 bg-[url('/img/sunny-bg-with-sunicon.svg')] bg-cover bg-center -z-10"></div>
 
-          {/* Main content */}
           <main className="h-full w-full pb-24">{children}</main>
 
-          {/* Footer Nav */}
-          <footer className="absolute bottom-5 left-0 w-full z-20">
+          <footer className="fixed bottom-5 w-full z-50 flex justify-center">
             <Nav />
           </footer>
         </div>

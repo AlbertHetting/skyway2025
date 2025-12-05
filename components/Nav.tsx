@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Nav() {
   return (
-    <nav className="flex flex-row justify-evenly gap-10">
+    <nav className="flex flex-row justify-center gap-20">
       <Link href="/app/widgets">
         <Image
           src="/img/widgets-icon.svg"
