@@ -24,17 +24,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex items-center justify-center min-h-screen overflow-hidden bg-gray-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative overflow-hidden bg-gray-100`}
       >
-        <div className="w-full h-full lg:w-[393px] lg:h-[852px] relative overflow-hidden bg-white border lg:border-gray-300 lg:shadow-lg">
-          <div className="fixed inset-0 bg-[url('/img/sunny-bg-with-sunicon.svg')] bg-cover bg-center -z-10"></div>
+        {/* Main content scrollable */}
+        <main className="min-h-screen w-full overflow-auto pb-24">
+          {children}
+        </main>
 
-          <main className="h-full w-full pb-24">{children}</main>
-
-          <footer className="fixed bottom-5 w-full z-50 flex justify-center">
-            <Nav />
-          </footer>
-        </div>
+        {/* Navbar fixed at bottom */}
+        <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 bg-white/80 backdrop-blur-sm">
+          <Nav />
+        </footer>
       </body>
     </html>
   );
