@@ -32,7 +32,7 @@ export default function RootLayout({
         </main>
 
         {/* Navbar fixed at bottom */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 bg-white/80 backdrop-blur-sm">
+        <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 ">
           <Nav />
         </footer>
       </body>
