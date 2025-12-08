@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Nav from "@/components/Nav";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +33,7 @@ export default function RootLayout({
 
         {/* Navbar fixed at bottom */}
         <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 ">
-          <Nav />
+          <Navbar />
         </footer>
       </body>
     </html>

@@ -1,10 +1,14 @@
+"use client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Nav() {
+export default function NavDash() {
+  const router = useRouter();
+
   return (
-    <nav className="flex flex-row justify-center gap-20">
-      <Link href="/app/widgets">
+    <nav className="flex flex-row w-100 justify-between px-5">
+      <Link href="/widgets">
         <Image
           src="/img/widgets-icon.svg"
           alt="Widget"
@@ -14,7 +18,7 @@ export default function Nav() {
         />
       </Link>
 
-      <Link href="/app/menu">
+      <Link href="/edit-widgets">
         <Image
           src="/img/move-widget-icon.svg"
           alt="Widget"
@@ -24,7 +28,7 @@ export default function Nav() {
         />
       </Link>
 
-      <Link href="/app/menu">
+      <Link href="/">
         <Image
           src="/img/burger-menu-icon.svg"
           alt="Widget"
