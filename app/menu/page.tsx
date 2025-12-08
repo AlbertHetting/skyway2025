@@ -18,21 +18,21 @@ export default function Menu() {
       {/* menu */}
       <section className="grid grid-cols-1 gap-5 mt-45 justify-items-center">
         <Link
-          href="/app/FAQ#databehandling"
+          href="/FAQ#databehandling"
           className="w-80 h-36 bg-white/95 rounded-2xl flex items-center justify-center drop-shadow-lg"
         >
           <p className="font-semibold text-3xl">Databehandling</p>
         </Link>
 
         <Link
-          href="/app/FAQ#feedback"
+          href="/FAQ#feedback"
           className="w-80 h-36 bg-white/95 rounded-2xl flex items-center justify-center drop-shadow-lg"
         >
           <p className="font-semibold text-3xl">Giv feedback</p>
         </Link>
 
         <Link
-          href="/app/FAQ"
+          href="/FAQ"
           className="w-80 h-36 bg-white/95 rounded-2xl flex items-center justify-center drop-shadow-lg"
         >
           <p className="font-semibold text-3xl">FAQ</p>
