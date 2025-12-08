@@ -10,7 +10,7 @@ export default function Dashboard() {
                 <Image className="mt-5"
                 src="/SkywayLogo.png"
                 alt="Next.js logo"
-                width={50}
+                width={70}
                  height={20}
                  priority
                 />
@@ -23,7 +23,7 @@ export default function Dashboard() {
 
 
 
-                <div className="text-black flex flex-col  justify-center text-center mt-5" >
+                <div className="text-black flex flex-col  justify-center text-center mt-3" >
 
                     <h1 className="text-xl">LOCATION</h1>
                     <h2 className="font-bold text-4xl">TEMP</h2>
