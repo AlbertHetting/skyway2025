@@ -75,8 +75,8 @@ export default function Onboarding() {
                     />
 
                         <div className="bg-white w-60 h-18 rounded-2xl flex flex-col items-center justify-center">
-                            <h1 className="text-black text-center text-xl font-bold " >Din favorit widget</h1>
-                            <h1 className="text-black text-center text-base font-bold" >bliver vist øverst dashboard</h1>
+                            <h1 className="text-black text-center text-lg font-bold " >Din favorit widget bliver</h1>
+                            <h1 className="text-black text-center text-md font-bold" >vist øverst på dit dashboard</h1>
                         </div>
 
                     </div>
