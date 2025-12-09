@@ -62,7 +62,7 @@ function deriveCondition(
   cloudFrac?: number,
   lightningProb?: number
 ): WeatherCondition {
-    if (typeof lightningProb === "number" && lightningProb >= 0.3) {
+    if (typeof lightningProb === "number" && lightningProb >= 0.6) {
     return "thunder";
   }
 
@@ -202,7 +202,7 @@ export async function getDmiWeather(
       condition: cond,
     });
 
-    if (hourly.length >= 15) break; // e.g. now + next 6
+    if (hourly.length >= 23) break; // e.g. now + next 6
   }
 
   return {

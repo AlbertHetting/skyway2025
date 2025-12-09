@@ -205,9 +205,9 @@ const mainIconAlt = weather?.condition ?? "Weather icon";
 
 <div className="mt-[-50] flex justify-center">
   {/* Window with fixed / max width + horizontal scroll */}
-  <div className="w-full max-w-[360px] overflow-x-auto">
+  <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
     {/* Your existing styling, just with gap + non-shrinking items */}
-    <div className="flex flex-row ">
+    <div className="flex flex-row">
       {weather?.hourly?.map((entry, index) => {
         const date = new Date(entry.time);
         const isNow = index === 0;
