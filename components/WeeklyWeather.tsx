@@ -53,17 +53,17 @@ export default function WeeklyWeather() {
         onClick={requestLocation}
         className="bg-blue-600 text-white px-4 py-2 rounded-xl"
       >
-        Enable location
+        Aktiver lokation
       </button>
     );
   }
 
-  if (geoLoading || loading) return <p>Loading weekly weather…</p>;
+  if (geoLoading || loading) return <p>Loader 3 dages visning…</p>;
   if (geoError) return <p className="text-red-500">{geoError}</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <section className="grid grid-cols-3 gap-2 mt-3">
+    <section className="grid grid-cols-3 gap-10">
       {forecast.map((d) => {
         const tempDayC =
           d.tempDay !== undefined ? Math.round(d.tempDay - 273.15) : null;

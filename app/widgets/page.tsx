@@ -18,7 +18,7 @@ export default function Widgets() {
           />
         </div>
 
-        <div className="w-[80vw] text-center text-black text-sm italic mb-10">
+        <div className="w-[80vw] text-center text-black text-sm italic mb-5">
           Vælg de widgets du gerne <br /> vil have vist på dashboardet <br />
           Hjertet placerer widget'en øverst
         </div>
@@ -28,19 +28,32 @@ export default function Widgets() {
       <section className="grid grid-cols-2 gap-5 justify-items-center w-full max-w-4xl">
         {/* Placeholder widgets */}
         <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
-          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
-          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
+          <div className="flex items-start justify-between w-full z-10">
+            <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+            <Image
+              src="/img/heart-icon.svg"
+              alt="heart"
+              width={50}
+              height={50}
+            />
+          </div>
         </div>
 
         <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
-          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
-          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
+          <div className="flex items-start justify-between w-full z-10">
+            <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+            <Image
+              src="/img/heart-icon.svg"
+              alt="heart"
+              width={50}
+              height={50}
+            />
+          </div>
         </div>
 
-        {/* Weekly Weather Widget - full width */}
-        <div className="w-full h-36 bg-white rounded-2xl col-span-2 p-4 flex flex-col items-center">
-          {/* Icons row stays at the top */}
-          <div className="flex justify-between w-full mb-4">
+        {/* Weekly Weather Widget */}
+        <div className="w-full bg-white rounded-2xl col-span-2 p-2 flex flex-col items-center relative">
+          <div className="flex items-start justify-between -mb-8 w-full z-10">
             <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
             <Image
               src="/img/heart-icon.svg"
@@ -51,20 +64,34 @@ export default function Widgets() {
           </div>
 
           {/* WeeklyWeather underneath */}
-          <div className="w-full">
+          <div className="w-full flex justify-center z-100">
             <WeeklyWeather />
           </div>
         </div>
 
         {/* Additional placeholder widgets */}
         <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
-          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
-          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
+          <div className="flex items-start justify-between w-full z-10">
+            <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+            <Image
+              src="/img/heart-icon.svg"
+              alt="heart"
+              width={50}
+              height={50}
+            />
+          </div>
         </div>
 
         <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
-          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
-          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
+          <div className="flex items-start justify-between w-full z-10">
+            <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+            <Image
+              src="/img/heart-icon.svg"
+              alt="heart"
+              width={50}
+              height={50}
+            />
+          </div>
         </div>
       </section>
     </main>
