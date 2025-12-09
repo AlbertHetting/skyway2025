@@ -63,11 +63,19 @@ export default function WeeklyWeather() {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <section className="grid grid-cols-7 gap-2 mt-3">
+    <section className="grid grid-cols-3 gap-2 mt-3">
       {forecast.map((d) => (
         <div key={d.date} className="flex flex-col items-center text-center">
-          <p className="font-bold">{Math.round(d.tempDay)}°</p>
-          <h5 className="text-gray-500">{Math.round(d.tempNight)}°</h5>
+          <p className="font-bold">
+            {d.tempDay !== undefined
+              ? Math.round(d.tempDay - 273.15) + "°C"
+              : "--"}
+          </p>
+          <h5>
+            {d.tempNight !== undefined
+              ? Math.round(d.tempNight - 273.15) + "°C"
+              : "--"}
+          </h5>
           <div>{d.weekday}</div>
         </div>
       ))}
@@ -91,7 +99,7 @@ function aggregateToDays(data) {
 
   return Object.keys(map)
     .sort()
-    .slice(0, 7)
+    .slice(0, 3) // <-- only take the first 3 days
     .map((date) => {
       const entries = map[date];
 

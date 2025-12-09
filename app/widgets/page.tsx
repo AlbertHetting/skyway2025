@@ -1,115 +1,66 @@
-import WeeklyWeather from "@/components/WeeklyWeather";
+"use client";
+
 import Image from "next/image";
+import WeeklyWeather from "@/components/WeeklyWeather";
 
 export default function Widgets() {
   return (
-    <main className="w-full h-screen bg-fixed bg-cover bg-center bg-[url('/img/bg-widgets-cloudy.svg')] flex flex-col items-center">
+    <main className="w-full min-h-screen bg-fixed bg-cover bg-center bg-[url('/img/bg-widgets-cloudy.svg')] flex flex-col items-center p-5">
       {/* Header */}
       <section className="flex flex-col items-center">
-        <div className="w-full flex items-center justify-center pt-5 mb-5">
+        <div className="flex items-center justify-center mb-5">
           <Image
             src="/img/skyway-logo-with-text.svg"
             alt="Skyway logo"
             width={200}
             height={100}
-            className="size-30"
+            loading="eager" // LCP optimization
           />
         </div>
 
-        <div className="w-[80vw] text-center items-center text-black text-sm italic">
+        <div className="w-[80vw] text-center text-black text-sm italic mb-10">
           Vælg de widgets du gerne <br /> vil have vist på dashboardet <br />
           Hjertet placerer widget'en øverst
         </div>
       </section>
 
       {/* Widget Grid */}
-      <section className="max-w-100 grid grid-cols-2 gap-5 mt-10 justify-items-center">
-        <div className="w-40 h-36 bg-white rounded-2xl p-2">
-          <div className="flex justify-between">
-            <Image
-              src="/img/add-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-            <Image
-              src="/img/heart-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-          </div>
+      <section className="grid grid-cols-2 gap-5 justify-items-center w-full max-w-4xl">
+        {/* Placeholder widgets */}
+        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
 
-        <div className="w-40 h-36 bg-white rounded-2xl p-2">
-          <div className="flex justify-between">
-            <Image
-              src="/img/add-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-            <Image
-              src="/img/heart-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-          </div>
+        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
 
-        <div className="w-full h-36 bg-white rounded-2xl col-span-2 p-2">
-          <div className="flex justify-between z-10">
-            <Image
-              src="/img/add-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
+        {/* Weekly Weather Widget - full width */}
+        <div className="w-full h-44 bg-white rounded-2xl col-span-2 p-4 flex flex-col items-center">
+          <div className="flex justify-between w-full mb-2">
+            <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
             <Image
               src="/img/heart-icon.svg"
-              alt="favorit-ikon"
+              alt="heart"
               width={50}
               height={50}
             />
           </div>
 
-          {/*Weekly weather container */}
-          <section>{<WeeklyWeather />}</section>
+          <WeeklyWeather />
         </div>
 
-        <div className="w-40 h-36 bg-white rounded-2xl p-2">
-          <div className="flex justify-between">
-            <Image
-              src="/img/add-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-            <Image
-              src="/img/heart-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-          </div>
+        {/* Additional placeholder widgets */}
+        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
 
-        <div className="w-40 h-36 bg-white rounded-2xl p-2">
-          <div className="flex justify-between">
-            <Image
-              src="/img/add-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-            <Image
-              src="/img/heart-icon.svg"
-              alt="favorit-ikon"
-              width={50}
-              height={50}
-            />
-          </div>
+        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+          <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
+          <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
       </section>
     </main>

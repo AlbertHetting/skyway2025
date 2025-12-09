@@ -1,34 +1,34 @@
 import { NextResponse } from "next/server";
 
+const DMI_BASE =
+  "https://opendataapi.dmi.dk/v1/forecastedr/collections/harmonie_dini_sf/position";
+
+function buildDmiUrl(lat, lon) {
+  const coords = `POINT(${lon} ${lat})`;
+  const params = new URLSearchParams({
+    coords,
+    crs: "crs84",
+    "parameter-name": "temperature-2m",
+    f: "GeoJSON",
+  });
+  return `${DMI_BASE}?${params.toString()}`;
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = request.nextUrl;
 
-    const lat = searchParams.get("lat");
-    const lon = searchParams.get("lon");
+    const lat = parseFloat(searchParams.get("lat"));
+    const lon = parseFloat(searchParams.get("lon"));
 
-    if (!lat || !lon) {
-      return NextResponse.json(
-        { error: "Missing lat or lon", debug: { lat, lon } },
-        { status: 400 }
-      );
-    }
-
-    const latNum = parseFloat(lat);
-    const lonNum = parseFloat(lon);
-
-    if (isNaN(latNum) || isNaN(lonNum)) {
+    if (isNaN(lat) || isNaN(lon)) {
       return NextResponse.json(
         { error: "Invalid coordinates", debug: { lat, lon } },
         { status: 400 }
       );
     }
 
-    const latFixed = latNum.toFixed(6);
-    const lonFixed = lonNum.toFixed(6);
-
-    const dmiUrl = `https://opendataapi.dmi.dk/v1/forecastedr/collections/harmonie_dini_sf/position?coords=POINT(${lonFixed} ${latFixed})&crs=crs84&parameter-name=temperature-0m`;
-
+    const dmiUrl = buildDmiUrl(lat, lon);
     const res = await fetch(dmiUrl, { next: { revalidate: 1800 } });
 
     if (!res.ok) {
@@ -41,16 +41,13 @@ export async function GET(request) {
 
     const json = await res.json();
 
-    const timeseries = (json.properties?.timeseries || []).map((entry) => ({
-      time: entry.time,
-      temperature: entry.data["temperature-0m"],
+    // Simplify: create timeseries for front-end
+    const timeseries = (json.features || []).map((f) => ({
+      time: f.properties.step || f.properties.time,
+      temperature: f.properties["temperature-2m"],
     }));
 
-    return NextResponse.json({
-      timeseries,
-      lat: latFixed,
-      lon: lonFixed,
-    });
+    return NextResponse.json({ timeseries, lat, lon });
   } catch (err) {
     console.error("weather-weekly error:", err);
     return NextResponse.json(
