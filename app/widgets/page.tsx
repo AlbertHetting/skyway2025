@@ -27,18 +27,18 @@ export default function Widgets() {
       {/* Widget Grid */}
       <section className="grid grid-cols-2 gap-5 justify-items-center w-full max-w-4xl">
         {/* Placeholder widgets */}
-        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+        <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
           <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
           <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
 
-        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+        <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
           <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
           <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
 
         {/* Weekly Weather Widget - full width */}
-        <div className="w-full bg-white rounded-2xl col-span-2 p-4 flex flex-col items-center">
+        <div className="w-full h-36 bg-white rounded-2xl col-span-2 p-4 flex flex-col items-center">
           {/* Icons row stays at the top */}
           <div className="flex justify-between w-full mb-4">
             <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
@@ -57,12 +57,12 @@ export default function Widgets() {
         </div>
 
         {/* Additional placeholder widgets */}
-        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+        <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
           <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
           <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
 
-        <div className="w-40 h-36 bg-white rounded-2xl p-2 flex justify-between">
+        <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
           <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
           <Image src="/img/heart-icon.svg" alt="heart" width={50} height={50} />
         </div>
