@@ -1,20 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useGeolocation } from "@/hooks/useGeolocation";
 
 export default function WeeklyWeather() {
-  const {
-    coords,
-    error: geoError,
-    loading: geoLoading,
-    requestLocation,
-  } = useGeolocation();
+  const [coords, setCoords] = useState(null);
+  const [geoError, setGeoError] = useState(null);
+  const [geoLoading, setGeoLoading] = useState(true);
 
   const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Automatically request location on mount
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setGeoError("Geolocation is not supported in this browser.");
+      setGeoLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setGeoLoading(false);
+      },
+      (err) => {
+        setGeoError(err.message || "Failed to get location.");
+        setGeoLoading(false);
+      }
+    );
+  }, []);
+
+  // Fetch weather when coordinates are available
   useEffect(() => {
     if (!coords) return;
 
@@ -26,17 +43,12 @@ export default function WeeklyWeather() {
         const res = await fetch(
           `/api/weather-weekly?lat=${coords.lat}&lon=${coords.lon}`
         );
-        if (!res.ok) {
-          const t = await res.text();
-          throw new Error(t);
-        }
+        if (!res.ok) throw new Error(await res.text());
 
         const json = await res.json();
         const days = aggregateToDays(json);
-        console.log("Aggregated forecast:", days); // optional debug
         setForecast(days);
       } catch (err) {
-        console.error(err);
         setError(err.message || "Failed to load weather");
       } finally {
         setLoading(false);
@@ -47,40 +59,23 @@ export default function WeeklyWeather() {
   }, [coords]);
 
   // --- UI ---
-  if (!coords && !geoLoading) {
-    return (
-      <button
-        onClick={requestLocation}
-        className="bg-blue-600 text-white px-4 py-2 rounded-xl"
-      >
-        Aktiver lokation
-      </button>
-    );
-  }
-
-  if (geoLoading || loading) return <p>Loader 3 dages visning…</p>;
+  if (geoLoading || loading) return <p>Loading weekly weather…</p>;
   if (geoError) return <p className="text-red-500">{geoError}</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <section className="grid grid-cols-3 gap-10">
+    <section className="grid grid-cols-3 gap-15 justify-items-center">
       {forecast.map((d) => {
         const tempDayC =
           d.tempDay !== undefined ? Math.round(d.tempDay - 273.15) : null;
 
-        // Select icon based on temperature
         let icon = "/WeatherTransIcons/Cloudy.png";
-        if (tempDayC !== null) {
-          if (tempDayC > 8) {
-            icon = "/WeatherTransIcons/Sunny.png";
-          }
-          // You can add more conditions here later for rain, snow, etc.
-        }
+        if (tempDayC !== null && tempDayC > 8)
+          icon = "/WeatherTransIcons/Sunny.png";
 
         return (
           <div key={d.date} className="flex flex-col items-center text-center">
             <img src={icon} alt="Weather icon" width={40} height={40} />
-
             <p className="font-bold text-2xl">
               {tempDayC !== null ? tempDayC + "°C" : "--"}
             </p>
@@ -89,7 +84,6 @@ export default function WeeklyWeather() {
                 ? Math.round(d.tempNight - 273.15) + "°C"
                 : "--"}
             </p>
-
             <div className="font-bold">{d.weekday}</div>
           </div>
         );
@@ -114,12 +108,11 @@ function aggregateToDays(data) {
 
   return Object.keys(map)
     .sort()
-    .slice(0, 3) // <-- only take the first 3 days
+    .slice(0, 3)
     .map((date) => {
       const entries = map[date];
-
-      const dayEntry = pickNearest(entries, 14) || entries[0]; // fallback
-      const nightEntry = pickNearest(entries, 3) || entries[0]; // fallback
+      const dayEntry = pickNearest(entries, 14) || entries[0];
+      const nightEntry = pickNearest(entries, 3) || entries[0];
 
       return {
         date,
