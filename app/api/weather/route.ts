@@ -1,6 +1,6 @@
 // app/api/weather/route.ts
 import { NextResponse } from "next/server";
-import { getDmiTemperature } from "../../dmi";
+import { getDmiWeather } from "../../dmi";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -16,7 +16,8 @@ export async function GET(req: Request) {
   }
 
   try {
-    const data = await getDmiTemperature(lat, lon);
+    const data = await getDmiWeather(lat, lon);
+    // data = { temperatureC, time, condition }
     return NextResponse.json(data);
   } catch (err) {
     console.error(err);

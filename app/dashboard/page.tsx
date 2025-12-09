@@ -6,7 +6,70 @@ import { useEffect, useState } from "react";
 type WeatherResult = {
   temperatureC: number;
   time: string | null;
+  condition: "sunny" | "partly-cloudy" | "cloudy" | "rain" | "snow" | "sleet" | "hail" |  "drizzle" | "thunder" | "unknown";
 };
+
+
+function getMainIcon(condition?: WeatherResult["condition"]): string {
+  switch (condition) {
+    case "sunny":
+      return "/WeatherTransIcons/Sunny.png";
+    case "partly-cloudy":
+      return "/WeatherTransIcons/CloudyDay.png";
+    case "cloudy":
+      return "/WeatherTransIcons/Cloudy.png";
+    case "rain":
+      return "/WeatherTransIcons/Rain.png";
+    case "drizzle":
+      return "/WeatherTransIcons/Rain.png";
+    case "snow":
+      return "/WeatherTransIcons/Snow.png";
+    case "sleet":
+      return "/WeatherTransIcons/Snow.png";
+    case "thunder":
+      return "/WeatherTransIcons/Thunder.png";  
+    case "hail":
+      return "/WeatherTransIcons/Snow.png"; 
+    default:
+      return "/WeatherTransIcons/CloudyDay.png"; // fallback
+  }
+}
+
+
+
+function getIconForCondition(
+  condition:
+    | "sunny"
+    | "partly-cloudy"
+    | "cloudy"
+    | "rain"
+    | "snow"
+    | "sleet"
+    | "hail"
+    | "thunder"
+    | "unknown"
+): string {
+  switch (condition) {
+    case "thunder":
+      return "/WeatherTransIcons/Thunder.png";
+    case "rain":
+      return "/WeatherTransIcons/Rain.png";
+    case "snow":
+      return "/WeatherTransIcons/Snow.png";
+    case "sleet":
+      return "/WeatherTransIcons/Sleet.png";
+    case "hail":
+      return "/WeatherTransIcons/Hail.png";
+    case "sunny":
+      return "/WeatherTransIcons/Sunny.png";
+    case "partly-cloudy":
+      return "/WeatherTransIcons/CloudyDay.png";
+    case "cloudy":
+      return "/WeatherTransIcons/Cloudy.png";
+    default:
+      return "/WeatherTransIcons/CloudyDay.png";
+  }
+}
 
 export default function Dashboard() {
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(
@@ -77,6 +140,9 @@ export default function Dashboard() {
 
   const wholeTemp = weather ? Math.round(weather.temperatureC) : null;
 
+const mainIconSrc = getMainIcon(weather?.condition);
+const mainIconAlt = weather?.condition ?? "Weather icon";
+
   return (
     <div className="flex min-h-screen justify-center bg-zinc-50 font-sans bg-[linear-gradient(to_bottom,_white_0%,_#FFE8C8_25%,_#FFE8C8_75%,_white_100%)]">
       <main>
@@ -124,137 +190,63 @@ export default function Dashboard() {
           <h3>{displayDate}</h3>
         </div>
 
-        <div className="flex flex-row justify-center">
-          <Image
-            className="mt-[-40]"
-            src="/WeatherTransIcons/Sunny.png"
-            alt="Weather icon"
-            width={285}
-            height={20}
-            priority
-          />
-        </div>
+          <div className="flex flex-row justify-center">
+            <Image
+              className="mt-[-40]"
+              src={mainIconSrc}
+              alt={mainIconAlt}
+              width={285}
+              height={285} // or whatever size you actually want
+              priority
+            />
+          </div>
 
-        <div className="flex flex-row mt-[-50]">
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">now</h1>
+
+
+<div className="mt-[-50] flex justify-center">
+  {/* Window with fixed / max width + horizontal scroll */}
+  <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
+    {/* Your existing styling, just with gap + non-shrinking items */}
+    <div className="flex flex-row">
+      {weather?.hourly?.map((entry, index) => {
+        const date = new Date(entry.time);
+        const isNow = index === 0;
+
+        const label = isNow
+          ? "nu"
+          : date.toLocaleTimeString("da-DK", {
+              hour: "2-digit",
+            });
+
+        const iconSrc = getIconForCondition(entry.condition);
+        const tempWhole = Math.round(entry.temperatureC);
+
+        return (
+          <div
+            key={entry.time}
+            className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
+          >
+            <h1 className="text-black font-bold">{label}</h1>
 
             <Image
               className="mt-[-10]"
-              src="/WeatherTransIcons/CloudyDay.png"
-              alt="Cloudy"
+              src={iconSrc}
+              alt={entry.condition}
               width={50}
               height={50}
-              priority
+              priority={index === 0}
             />
 
             <h1 className="text-black font-bold mt-[-10]">
-              10<span>&#176;</span>
+              {tempWhole}
+              <span>&#176;</span>
             </h1>
           </div>
-
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">12</h1>
-
-            <Image
-              className="mt-[-10]"
-              src="/WeatherTransIcons/CloudyDay.png"
-              alt="Cloudy"
-              width={50}
-              height={50}
-              priority
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              11<span>&#176;</span>
-            </h1>
-          </div>
-
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">13</h1>
-
-            <Image
-              className="mt-[-10]"
-              src="/WeatherTransIcons/Cloudy.png"
-              alt="Cloudy"
-              width={50}
-              height={50}
-              priority
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              13<span>&#176;</span>
-            </h1>
-          </div>
-
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">14</h1>
-
-            <Image
-              className="mt-[-10]"
-              src="/WeatherTransIcons/HeavyRain.png"
-              alt="Heavy rain"
-              width={50}
-              height={50}
-              priority
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              13<span>&#176;</span>
-            </h1>
-          </div>
-
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">15</h1>
-
-            <Image
-              className="mt-[-10]"
-              src="/WeatherTransIcons/Thunder.png"
-              alt="Thunder"
-              width={50}
-              height={50}
-              priority
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              13<span>&#176;</span>
-            </h1>
-          </div>
-
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">16</h1>
-
-            <Image
-              className="mt-[-10]"
-              src="/WeatherTransIcons/Rain.png"
-              alt="Rain"
-              width={50}
-              height={50}
-              priority
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              8<span>&#176;</span>
-            </h1>
-          </div>
-
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-black font-bold">16:23</h1>
-
-            <Image
-              className="mt-[-10]"
-              src="/WeatherTransIcons/Sunset.png"
-              alt="Sunset"
-              width={50}
-              height={50}
-              priority
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              8<span>&#176;</span>
-            </h1>
-          </div>
-        </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
 
         <div className="flex flex-row justify-center gap-5 mt-5 drop-shadow-xl">
           <div className="w-40 h-40 bg-white rounded-3xl "></div>

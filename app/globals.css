@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Inter, Helvetica, sans-serif;
 }
+
+
+/* Hide scrollbars but keep scrolling */
+.scroll-hide {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+}
+
+.scroll-hide::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, Edge */
+}
