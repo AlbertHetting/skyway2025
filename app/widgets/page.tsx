@@ -1,3 +1,4 @@
+import WeeklyWeather from "@/components/WeeklyWeather";
 import Image from "next/image";
 
 export default function Widgets() {
@@ -58,7 +59,7 @@ export default function Widgets() {
         </div>
 
         <div className="w-full h-36 bg-white rounded-2xl col-span-2 p-2">
-          <div className="flex justify-between">
+          <div className="flex justify-between z-10">
             <Image
               src="/img/add-icon.svg"
               alt="favorit-ikon"
@@ -72,6 +73,9 @@ export default function Widgets() {
               height={50}
             />
           </div>
+
+          {/*Weekly weather container */}
+          <section>{<WeeklyWeather />}</section>
         </div>
 
         <div className="w-40 h-36 bg-white rounded-2xl p-2">
