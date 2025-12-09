@@ -64,21 +64,36 @@ export default function WeeklyWeather() {
 
   return (
     <section className="grid grid-cols-3 gap-2 mt-3">
-      {forecast.map((d) => (
-        <div key={d.date} className="flex flex-col items-center text-center">
-          <p className="font-bold">
-            {d.tempDay !== undefined
-              ? Math.round(d.tempDay - 273.15) + "°C"
-              : "--"}
-          </p>
-          <h5>
-            {d.tempNight !== undefined
-              ? Math.round(d.tempNight - 273.15) + "°C"
-              : "--"}
-          </h5>
-          <div>{d.weekday}</div>
-        </div>
-      ))}
+      {forecast.map((d) => {
+        const tempDayC =
+          d.tempDay !== undefined ? Math.round(d.tempDay - 273.15) : null;
+
+        // Select icon based on temperature
+        let icon = "/WeatherTransIcons/Cloudy.png";
+        if (tempDayC !== null) {
+          if (tempDayC > 8) {
+            icon = "/WeatherTransIcons/Sunny.png";
+          }
+          // You can add more conditions here later for rain, snow, etc.
+        }
+
+        return (
+          <div key={d.date} className="flex flex-col items-center text-center">
+            <img src={icon} alt="Weather icon" width={40} height={40} />
+
+            <p className="font-bold text-2xl">
+              {tempDayC !== null ? tempDayC + "°C" : "--"}
+            </p>
+            <p className="text-sm">
+              {d.tempNight !== undefined
+                ? Math.round(d.tempNight - 273.15) + "°C"
+                : "--"}
+            </p>
+
+            <div className="font-bold">{d.weekday}</div>
+          </div>
+        );
+      })}
     </section>
   );
 }
