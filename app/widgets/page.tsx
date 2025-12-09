@@ -14,7 +14,7 @@ export default function Widgets() {
             alt="Skyway logo"
             width={200}
             height={100}
-            loading="eager" // LCP optimization
+            loading="eager"
           />
         </div>
 
@@ -38,8 +38,9 @@ export default function Widgets() {
         </div>
 
         {/* Weekly Weather Widget - full width */}
-        <div className="w-full h-44 bg-white rounded-2xl col-span-2 p-4 flex flex-col items-center">
-          <div className="flex justify-between w-full mb-2">
+        <div className="w-full bg-white rounded-2xl col-span-2 p-4 flex flex-col items-center">
+          {/* Icons row stays at the top */}
+          <div className="flex justify-between w-full mb-4">
             <Image src="/img/add-icon.svg" alt="add" width={50} height={50} />
             <Image
               src="/img/heart-icon.svg"
@@ -49,7 +50,10 @@ export default function Widgets() {
             />
           </div>
 
-          <WeeklyWeather />
+          {/* WeeklyWeather underneath */}
+          <div className="w-full">
+            <WeeklyWeather />
+          </div>
         </div>
 
         {/* Additional placeholder widgets */}
