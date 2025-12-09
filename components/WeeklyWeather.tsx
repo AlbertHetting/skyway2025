@@ -1,0 +1,140 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function WeeklyWeather() {
+  const [coords, setCoords] = useState(null);
+  const [geoError, setGeoError] = useState(null);
+  const [geoLoading, setGeoLoading] = useState(true);
+
+  const [forecast, setForecast] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Automatically request location on mount
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setGeoError("Geolocation is not supported in this browser.");
+      setGeoLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setGeoLoading(false);
+      },
+      (err) => {
+        setGeoError(err.message || "Failed to get location.");
+        setGeoLoading(false);
+      }
+    );
+  }, []);
+
+  // Fetch weather when coordinates are available
+  useEffect(() => {
+    if (!coords) return;
+
+    async function loadWeather() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch(
+          `/api/weather-weekly?lat=${coords.lat}&lon=${coords.lon}`
+        );
+        if (!res.ok) throw new Error(await res.text());
+
+        const json = await res.json();
+        const days = aggregateToDays(json);
+        setForecast(days);
+      } catch (err) {
+        setError(err.message || "Failed to load weather");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadWeather();
+  }, [coords]);
+
+  // --- UI ---
+  if (geoLoading || loading) return <p>Loading weekly weather…</p>;
+  if (geoError) return <p className="text-red-500">{geoError}</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  return (
+    <section className="grid grid-cols-3 gap-15 justify-items-center">
+      {forecast.map((d) => {
+        const tempDayC =
+          d.tempDay !== undefined ? Math.round(d.tempDay - 273.15) : null;
+
+        let icon = "/WeatherTransIcons/Cloudy.png";
+        if (tempDayC !== null && tempDayC > 8)
+          icon = "/WeatherTransIcons/Sunny.png";
+
+        return (
+          <div key={d.date} className="flex flex-col items-center text-center">
+            <img src={icon} alt="Weather icon" width={40} height={40} />
+            <p className="font-bold text-2xl">
+              {tempDayC !== null ? tempDayC + "°C" : "--"}
+            </p>
+            <p className="text-sm">
+              {d.tempNight !== undefined
+                ? Math.round(d.tempNight - 273.15) + "°C"
+                : "--"}
+            </p>
+            <div className="font-bold">{d.weekday}</div>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+/* ---------------- Helpers ---------------- */
+function aggregateToDays(data) {
+  const map = {};
+
+  (data.timeseries || []).forEach((entry) => {
+    const dt = new Date(entry.time);
+    const date = entry.time.split("T")[0];
+    const hour = dt.getHours();
+    const temp = entry.temperature;
+
+    if (!map[date]) map[date] = [];
+    map[date].push({ hour, temp });
+  });
+
+  return Object.keys(map)
+    .sort()
+    .slice(0, 3)
+    .map((date) => {
+      const entries = map[date];
+      const dayEntry = pickNearest(entries, 14) || entries[0];
+      const nightEntry = pickNearest(entries, 3) || entries[0];
+
+      return {
+        date,
+        weekday: new Date(date).toLocaleDateString("da-DK", {
+          weekday: "short",
+        }),
+        tempDay: dayEntry.temp,
+        tempNight: nightEntry.temp,
+      };
+    });
+}
+
+function pickNearest(list, targetHour) {
+  let best = null;
+  let bestDiff = Infinity;
+
+  for (const e of list) {
+    const diff = Math.abs(e.hour - targetHour);
+    if (diff < bestDiff) {
+      best = e;
+      bestDiff = diff;
+    }
+  }
+  return best;
+}
