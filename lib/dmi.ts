@@ -66,7 +66,7 @@ function deriveCondition(
 
   // drizzle = 0, rain = 1, sleet = 2, snow = 3,
   // freezing drizzle = 4, freezing rain = 5, graupel = 6, hail = 7
-  if (typeof precipType === "number") {
+  if (typeof precipType === "number" && precipType > 0) {
     if (precipType === 0) {
       return "drizzle";
     }
@@ -81,19 +81,14 @@ function deriveCondition(
     ) {
       return "snow";
     }
-    if (precipType === 7) {
-      return "hail"; // or treat 0 as drizzle/rain if you prefer
-    }
   }
 
   // If no active precip, decide from cloud fraction (0..1)
   if (typeof cloudFrac === "number") {
-    if (cloudFrac < 0.1) return "sunny";
-    if (cloudFrac < 0.5) return "partly-cloudy";
-    if (cloudFrac < 0.8) return "cloudy";
+    if (cloudFrac < 0.35) return "sunny";
+    if (cloudFrac < 0.99) return "partly-cloudy";
     return "cloudy";
   }
-
   return "unknown";
 }
 
@@ -108,6 +103,7 @@ export async function getDmiWeather(
   hourly: HourlyForecast[];
 }> {
   const url = buildDmiUrl(lat, lon);
+  
 
   const res = await fetch(url, {
     next: { revalidate: 600 }, // cache 10 min on server
@@ -161,6 +157,7 @@ export async function getDmiWeather(
   const precipType = cp["precipitation-type"];
   const cloudFracTotal = cp["fraction-of-cloud-cover"]; // 👈 total cloud
   const lightningProb = cp["probability-of-lightning"];
+  
 
   const tempC = tempK - 273.15;
   const timeIso = cp.step as string | undefined;
