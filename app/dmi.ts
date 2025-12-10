@@ -13,6 +13,7 @@ type DmiFeature = {
     "precipitation-type"?: number;
     "fraction-of-cloud-cover"?: number;
     "probability-of-lightning"?: number;
+    "wind-speed-10m"?: number;
     step?: string;
     [key: string]: unknown;
   };
@@ -50,7 +51,7 @@ function buildDmiUrl(lat: number, lon: number) {
     coords,
     crs: "crs84",
     "parameter-name":
-    "temperature-2m,precipitation-type,fraction-of-cloud-cover,probability-of-lightning",
+    "temperature-2m,precipitation-type,fraction-of-cloud-cover,probability-of-lightning,wind-speed-10m",
     f: "GeoJSON",
   });
 
@@ -101,6 +102,7 @@ export async function getDmiWeather(
   time: string | null;
   condition: WeatherCondition;
   cloudFrac: number | null;
+  windspeedMs: number | null;
   hourly: HourlyForecast[];
 }> {
   const url = buildDmiUrl(lat, lon);
@@ -157,6 +159,7 @@ export async function getDmiWeather(
   const precipType = cp["precipitation-type"];
   const cloudFracTotal = cp["fraction-of-cloud-cover"]; // 👈 total cloud
   const lightningProb = cp["probability-of-lightning"];
+  const windSpeed = cp ["wind-speed-10m"];
 
   const tempC = tempK - 273.15;
   const timeIso = cp.step as string | undefined;
@@ -209,6 +212,7 @@ export async function getDmiWeather(
     time: timeIso || null,
     condition,
     cloudFrac: typeof cloudFracTotal === "number" ? cloudFracTotal : null,
+    windspeedMs: typeof windSpeed === "number" ? windSpeed : null,
     hourly,
   };
 }

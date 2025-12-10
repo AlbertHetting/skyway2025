@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { WeatherCondition, HourlyForecast } from "../dmi";
+import Running from "@/components/Running";
 
 type WeatherResult = {
   temperatureC: number;
@@ -10,6 +11,7 @@ type WeatherResult = {
   hourly: HourlyForecast[]; // 👈 add this
   cloudFrac: number | null;
   condition: WeatherCondition;
+  windspeedMs: number | null;
 };
 
 
@@ -241,7 +243,13 @@ const bgGradient = getBackgroundGradient(weather?.condition);
 </div>
 
         <div className="flex flex-row justify-center gap-5 mt-5 drop-shadow-xl">
-          <div className="w-40 h-40 bg-white rounded-3xl "></div>
+          <div>
+            <Running 
+              temperatureC={weather?.temperatureC ?? null}
+              condition={weather?.condition}
+              windSpeedMs={weather?.windspeedMs ?? null}
+            />
+          </div>
 
           <div className="w-40 h-40 bg-white rounded-3xl "></div>
         </div>
