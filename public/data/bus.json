@@ -1,0 +1,15 @@
+[
+  {
+    "line": "1A",
+    "station": "Willemoesgade",
+    "destination": "centrum",
+    "nextTrams": [
+      { "minutes": 5 },
+      { "minutes": 7 },
+      { "minutes": 11 },
+      { "minutes": 19 },
+      { "minutes": 23 },
+      { "minutes": 38 }
+    ]
+  }
+]
