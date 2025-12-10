@@ -107,7 +107,7 @@ export default function Running({
 
   const windText =
     typeof windSpeedMs === "number"
-      ? `Wind speeds up to ${windSpeedMs.toFixed(1)} m/s`
+      ? `Wind speed up to ${windSpeedMs.toFixed(1)} m/s`
       : "Wind speed unavailable";
 
   return (
