@@ -56,7 +56,7 @@ export default function WeeklyWeather() {
 
       try {
         const res = await fetch(
-          `/api/weather-weekly?lat=${coords.lat}&lon=${coords.lon}`
+          `/api/weather-weekly?lat=${coords!.lat}&lon=${coords!.lon}`
         );
         if (!res.ok) throw new Error(await res.text());
 
