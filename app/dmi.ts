@@ -85,9 +85,8 @@ function deriveCondition(
 
   // If no active precip, decide from cloud fraction (0..1)
   if (typeof cloudFrac === "number") {
-    if (cloudFrac < 0.1) return "sunny";
-    if (cloudFrac < 0.5) return "partly-cloudy";
-    if (cloudFrac < 0.8) return "cloudy";
+    if (cloudFrac < 0.35) return "sunny";
+    if (cloudFrac < 0.99) return "partly-cloudy";
     return "cloudy";
   }
 

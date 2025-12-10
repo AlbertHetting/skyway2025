@@ -2,15 +2,18 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import type { WeatherCondition, HourlyForecast } from "../dmi";
 
 type WeatherResult = {
   temperatureC: number;
   time: string | null;
-  condition: "sunny" | "partly-cloudy" | "cloudy" | "rain" | "snow" | "sleet" | "hail" |  "drizzle" | "thunder" | "unknown";
+  hourly: HourlyForecast[]; // 👈 add this
+  cloudFrac: number | null;
+  condition: WeatherCondition;
 };
 
 
-function getMainIcon(condition?: WeatherResult["condition"]): string {
+function getIconForCondition(condition?: WeatherCondition): string {
   switch (condition) {
     case "sunny":
       return "/WeatherTransIcons/Sunny.png";
@@ -21,7 +24,7 @@ function getMainIcon(condition?: WeatherResult["condition"]): string {
     case "rain":
       return "/WeatherTransIcons/Rain.png";
     case "drizzle":
-      return "/WeatherTransIcons/Rain.png";
+      return "/WeatherTransIcons/LightRain.png";
     case "snow":
       return "/WeatherTransIcons/Snow.png";
     case "sleet":
@@ -35,39 +38,28 @@ function getMainIcon(condition?: WeatherResult["condition"]): string {
   }
 }
 
-
-
-function getIconForCondition(
-  condition:
-    | "sunny"
-    | "partly-cloudy"
-    | "cloudy"
-    | "rain"
-    | "snow"
-    | "sleet"
-    | "hail"
-    | "thunder"
-    | "unknown"
-): string {
+function getBackgroundGradient(condition?: WeatherCondition): string {
   switch (condition) {
-    case "thunder":
-      return "/WeatherTransIcons/Thunder.png";
-    case "rain":
-      return "/WeatherTransIcons/Rain.png";
-    case "snow":
-      return "/WeatherTransIcons/Snow.png";
-    case "sleet":
-      return "/WeatherTransIcons/Sleet.png";
-    case "hail":
-      return "/WeatherTransIcons/Hail.png";
     case "sunny":
-      return "/WeatherTransIcons/Sunny.png";
+      return "linear-gradient(to bottom, white 0%, #FFE8C8 25%, #FFE8C8 85%, white 100%)";
+
     case "partly-cloudy":
-      return "/WeatherTransIcons/CloudyDay.png";
     case "cloudy":
-      return "/WeatherTransIcons/Cloudy.png";
+      return "linear-gradient(to bottom, white 0%, #B4B4B4 25%, #B4B4B4 90%, white 100%)";
+
+    case "drizzle":
+    case "rain":
+    case "snow":
+    case "hail":
+    case "sleet":
+      return "linear-gradient(to bottom, white 0%, #C7E4FF 25%, #C7E4FF 85%, white 100%)";
+
+
+      case "thunder":
+        return "linear-gradient(to bottom, white 0%, #5B5B5B 40%, #F8DC2A 80%, white 100%)";
+
     default:
-      return "/WeatherTransIcons/CloudyDay.png";
+      return "linear-gradient(to bottom, white 0%, #B4B4B4 25%, #B4B4B4 85%, white 100%)";
   }
 }
 
@@ -140,11 +132,13 @@ export default function Dashboard() {
 
   const wholeTemp = weather ? Math.round(weather.temperatureC) : null;
 
-const mainIconSrc = getMainIcon(weather?.condition);
+const mainIconSrc = getIconForCondition(weather?.condition);
 const mainIconAlt = weather?.condition ?? "Weather icon";
+const bgGradient = getBackgroundGradient(weather?.condition);
 
   return (
-    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans bg-[linear-gradient(to_bottom,_white_0%,_#FFE8C8_25%,_#FFE8C8_75%,_white_100%)]">
+    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans"
+    style={{ backgroundImage: bgGradient}}>
       <main>
         <div className="flex flex-col items-center">
           <Image
@@ -200,8 +194,6 @@ const mainIconAlt = weather?.condition ?? "Weather icon";
               priority
             />
           </div>
-
-
 
 <div className="mt-[-50] flex justify-center">
   {/* Window with fixed / max width + horizontal scroll */}
