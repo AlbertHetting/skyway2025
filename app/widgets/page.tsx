@@ -3,6 +3,7 @@
 import Image from "next/image";
 import WeeklyWeather from "@/components/WeeklyWeather";
 import Letbane from "@/components/Letbane";
+import Bus from "@/components/Bus";
 
 export default function Widgets() {
   return (
@@ -27,9 +28,9 @@ export default function Widgets() {
 
       {/* Widget Grid */}
       <section className="grid grid-cols-2 gap-5 justify-items-center w-full max-w-4xl ">
-        {/* Placeholder widgets */}
-        <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
-          <div className="flex items-start justify-between w-full z-10">
+        <div className="w-full h-36 bg-white rounded-2xl p-2 relative">
+          {/* Overlay icons */}
+          <div className="absolute top-2 left-2 right-2 flex justify-between z-10">
             <Image src="/img/add-icon.svg" alt="add" width={40} height={40} />
             <Image
               src="/img/heart-icon.svg"
@@ -37,6 +38,11 @@ export default function Widgets() {
               width={40}
               height={40}
             />
+          </div>
+
+          {/* Letbane content */}
+          <div className="w-full h-full flex justify-center items-center">
+            <Bus />
           </div>
         </div>
 
