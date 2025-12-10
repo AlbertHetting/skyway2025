@@ -1,9 +1,24 @@
 import { NextResponse } from "next/server";
 
+// --- DMI API ---
 const DMI_BASE =
   "https://opendataapi.dmi.dk/v1/forecastedr/collections/harmonie_dini_sf/position";
 
-function buildDmiUrl(lat, lon) {
+// Types
+type DmiFeature = {
+  properties: {
+    step?: string;
+    time?: string;
+    "temperature-2m": number;
+  };
+};
+
+type DmiGeoJson = {
+  features: DmiFeature[];
+};
+
+// Build DMI URL
+function buildDmiUrl(lat: number, lon: number): string {
   const coords = `POINT(${lon} ${lat})`;
   const params = new URLSearchParams({
     coords,
@@ -14,12 +29,23 @@ function buildDmiUrl(lat, lon) {
   return `${DMI_BASE}?${params.toString()}`;
 }
 
-export async function GET(request) {
+// GET handler
+export async function GET(request: Request) {
   try {
-    const { searchParams } = request.nextUrl;
+    const { searchParams } = new URL(request.url);
 
-    const lat = parseFloat(searchParams.get("lat"));
-    const lon = parseFloat(searchParams.get("lon"));
+    const latStr = searchParams.get("lat");
+    const lonStr = searchParams.get("lon");
+
+    if (!latStr || !lonStr) {
+      return NextResponse.json(
+        { error: "Missing coordinates" },
+        { status: 400 }
+      );
+    }
+
+    const lat = parseFloat(latStr);
+    const lon = parseFloat(lonStr);
 
     if (isNaN(lat) || isNaN(lon)) {
       return NextResponse.json(
@@ -39,16 +65,15 @@ export async function GET(request) {
       );
     }
 
-    const json = await res.json();
+    const json: DmiGeoJson = await res.json();
 
-    // Simplify: create timeseries for front-end
     const timeseries = (json.features || []).map((f) => ({
-      time: f.properties.step || f.properties.time,
+      time: f.properties.step ?? f.properties.time ?? null,
       temperature: f.properties["temperature-2m"],
     }));
 
     return NextResponse.json({ timeseries, lat, lon });
-  } catch (err) {
+  } catch (err: any) {
     console.error("weather-weekly error:", err);
     return NextResponse.json(
       { error: "Internal server error", details: err.message },
