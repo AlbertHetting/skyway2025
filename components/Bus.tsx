@@ -74,7 +74,7 @@ export default function Bus() {
                 {nextTrams.map((tram, tIdx) => (
                   <div
                     key={tIdx}
-                    className="flex-shrink-0 flex flex-col items-center w-16 snap-start"
+                    className="shrink-0 flex flex-col items-center w-16 snap-start"
                   >
                     <p className="text-[0.6rem]">{stationData.line}</p>
                     <Image

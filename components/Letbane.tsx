@@ -3,15 +3,28 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+// --- Types ---
+type Tram = {
+  minutes: number;
+};
+
+type LetbaneStation = {
+  station: string;
+  line: string;
+  destination: string;
+  image?: string;
+  nextTrams: Tram[];
+};
+
 export default function Letbane() {
-  const [data, setData] = useState<any[] | null>(null);
+  const [data, setData] = useState<LetbaneStation[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await fetch("/data/letbane.json");
-        const json = await res.json();
+        const json: LetbaneStation[] = await res.json();
         setData(json);
       } catch (e) {
         console.error("Fetch error:", e);
@@ -26,15 +39,12 @@ export default function Letbane() {
 
   // --- UI STATES ---
   if (loading) return <p>Loading…</p>;
-  if (!Array.isArray(data) || data.length === 0) return <p>No data</p>;
+  if (!data || data.length === 0) return <p>No data</p>;
 
   return (
     <main className="flex flex-col w-full h-full p-2 items-center gap-4">
-      {data.map((letbaneData, idx) => {
-        const nextTrams = Array.isArray(letbaneData.nextTrams)
-          ? letbaneData.nextTrams
-          : [];
-
+      {data.map((stationData, idx) => {
+        const nextTrams = stationData.nextTrams || [];
         if (nextTrams.length === 0) return <p key={idx}>No tram times</p>;
 
         return (
@@ -54,22 +64,21 @@ export default function Letbane() {
             </div>
 
             {/* Station Name */}
-            <h3 className="font-bold text-lg">{letbaneData.station}</h3>
+            <h3 className="font-bold text-lg">{stationData.station}</h3>
 
             {/* Upcoming trams (horizontal carousel) */}
             <div className="w-full text-xs font-medium">
-              <p>Mod {letbaneData.destination}</p>
+              <p>Mod {stationData.destination}</p>
 
-              {/* Horizontal scroll carousel */}
               <div className="flex -mx-4 mt-1 overflow-x-auto snap-x snap-mandatory">
                 {nextTrams.map((tram, tIdx) => (
                   <div
                     key={tIdx}
-                    className="flex-shrink-0 flex flex-col items-center w-16 snap-start"
+                    className="shrink-0 flex flex-col items-center w-16 snap-start"
                   >
-                    <p className="text-[0.6rem]">{letbaneData.line}</p>
+                    <p className="text-[0.6rem]">{stationData.line}</p>
                     <Image
-                      src={letbaneData.image || "/img/Letbanen.png"}
+                      src={stationData.image || "/img/Letbanen.png"}
                       alt="tram"
                       width={22}
                       height={22}

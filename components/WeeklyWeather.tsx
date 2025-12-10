@@ -2,14 +2,29 @@
 
 import { useEffect, useState } from "react";
 
+// --- Types ---
+type Coord = { lat: number; lon: number };
+
+type TimeseriesEntry = {
+  time: string;
+  temperature: number;
+};
+
+type WeeklyForecastEntry = {
+  date: string;
+  weekday: string;
+  tempDay?: number;
+  tempNight?: number;
+};
+
 export default function WeeklyWeather() {
-  const [coords, setCoords] = useState(null);
-  const [geoError, setGeoError] = useState(null);
+  const [coords, setCoords] = useState<Coord | null>(null);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const [geoLoading, setGeoLoading] = useState(true);
 
-  const [forecast, setForecast] = useState([]);
+  const [forecast, setForecast] = useState<WeeklyForecastEntry[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Automatically request location on mount
   useEffect(() => {
@@ -48,7 +63,7 @@ export default function WeeklyWeather() {
         const json = await res.json();
         const days = aggregateToDays(json);
         setForecast(days);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message || "Failed to load weather");
       } finally {
         setLoading(false);
@@ -93,8 +108,8 @@ export default function WeeklyWeather() {
 }
 
 /* ---------------- Helpers ---------------- */
-function aggregateToDays(data) {
-  const map = {};
+function aggregateToDays(data: { timeseries: TimeseriesEntry[] }) {
+  const map: Record<string, { hour: number; temp: number }[]> = {};
 
   (data.timeseries || []).forEach((entry) => {
     const dt = new Date(entry.time);
@@ -125,8 +140,11 @@ function aggregateToDays(data) {
     });
 }
 
-function pickNearest(list, targetHour) {
-  let best = null;
+function pickNearest(
+  list: { hour: number; temp: number }[],
+  targetHour: number
+) {
+  let best: { hour: number; temp: number } | null = null;
   let bestDiff = Infinity;
 
   for (const e of list) {
