@@ -1,0 +1,16 @@
+[
+  {
+    "line": "L1",
+    "station": "Lystrup st.",
+    "destination": "Odder",
+    "nextTrams": [
+      { "minutes": 3 },
+      { "minutes": 9 },
+      { "minutes": 14 },
+      { "minutes": 20 },
+      { "minutes": 26 },
+      { "minutes": 35 }
+    ],
+    "image": "/img/Letbanen.png"
+  }
+]
