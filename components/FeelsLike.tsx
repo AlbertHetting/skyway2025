@@ -19,7 +19,7 @@ export default function FeelsLikeWidget() {
   // Request user location
   useEffect(() => {
     if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported.");
+      setGeoError("Geolocation is not supported in this browser.");
       setGeoLoading(false);
       return;
     }
@@ -36,11 +36,11 @@ export default function FeelsLikeWidget() {
     );
   }, []);
 
-  // Fetch current weather for "feels like"
+  // Fetch current weather from server API
   useEffect(() => {
     if (!coords) return;
 
-    async function loadWeather() {
+    async function fetchWeather() {
       setLoading(true);
       setError(null);
 
@@ -50,33 +50,31 @@ export default function FeelsLikeWidget() {
         );
         if (!res.ok) throw new Error(await res.text());
 
-        const json = await res.json();
-        setWeather(json);
+        const data = await res.json();
+        setWeather(data);
       } catch (err: any) {
-        setError(err.message || "Failed to load weather");
+        setError(err.message || "Failed to fetch weather");
       } finally {
         setLoading(false);
       }
     }
 
-    loadWeather();
+    fetchWeather();
   }, [coords]);
 
-  // --- UI ---
+  // --- UI states ---
   if (geoLoading || loading) return <p>Loading weather…</p>;
   if (geoError) return <p className="text-red-500">{geoError}</p>;
   if (error) return <p className="text-red-500">{error}</p>;
   if (!weather) return <p>No weather data</p>;
 
-  // Convert Kelvin → Celsius
-  const actualTemp = Math.round(weather.temp - 273.15);
-  const feelsLikeTemp = Math.round(weather.feels_like - 273.15);
-
   return (
     <div className="w-full bg-white rounded-2xl p-4 flex flex-col items-center gap-2 shadow-md">
       <h3 className="font-bold text-lg">Feels Like</h3>
-      <p className="text-2xl font-bold">{actualTemp}°C</p>
-      <p className="text-sm text-gray-600">Feels like {feelsLikeTemp}°C</p>
+      <p className="text-2xl font-bold">{Math.round(weather.temp)}°C</p>
+      <p className="text-sm text-gray-600">
+        Feels like {Math.round(weather.feels_like)}°C
+      </p>
     </div>
   );
 }

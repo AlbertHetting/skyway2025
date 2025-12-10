@@ -13,17 +13,28 @@ export async function GET(req: Request) {
       );
     }
 
-    const API_KEY = process.env.OPENWEATHER_API_KEY; // set this in .env.local
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+    const API_KEY = process.env.OPENWEATHER_API_KEY;
+    if (!API_KEY) {
+      return NextResponse.json(
+        { error: "API key not set in .env.local" },
+        { status: 500 }
+      );
+    }
 
+    // Metric units = Celsius
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
     const res = await fetch(url);
-    if (!res.ok) throw new Error("Failed to fetch weather");
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`OpenWeather API error: ${text}`);
+    }
 
     const data = await res.json();
 
     return NextResponse.json({
-      temp: data.main.temp, // Kelvin
-      feels_like: data.main.feels_like, // Kelvin
+      temp: data.main.temp,
+      feels_like: data.main.feels_like,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
