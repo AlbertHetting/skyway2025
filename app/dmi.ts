@@ -160,6 +160,7 @@ export async function getDmiWeather(
   const cloudFracTotal = cp["fraction-of-cloud-cover"]; // 👈 total cloud
   const lightningProb = cp["probability-of-lightning"];
   const windSpeed = cp ["wind-speed-10m"];
+  
 
   const tempC = tempK - 273.15;
   const timeIso = cp.step as string | undefined;
