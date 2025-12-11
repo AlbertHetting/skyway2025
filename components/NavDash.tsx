@@ -28,7 +28,7 @@ export default function NavDash() {
         />
       </Link>
 
-      <Link href="/">
+      <Link href="/menu">
         <Image
           src="/img/burger-menu-icon.svg"
           alt="Widget"
