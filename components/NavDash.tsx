@@ -1,14 +1,19 @@
 "use client";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
+import { useEditMode } from "@/app/EditModeContext"; // path from NavDash to that file
+
+type NavDashProps = {
+  editMode: boolean;
+  onToggleEdit: () => void;
+};
 
 export default function NavDash() {
-  const router = useRouter();
+  const { editMode, toggleEditMode } = useEditMode();
 
   return (
     <nav className="flex flex-row w-100 justify-between px-5">
-      <Link href="/widgets">
+      {/* Left button – you can still turn this into a Link later if you want */}
+      <button type="button">
         <Image
           src="/img/widgets-icon.svg"
           alt="Widget"
@@ -16,27 +21,32 @@ export default function NavDash() {
           height={50}
           className="drop-shadow-lg"
         />
-      </Link>
+      </button>
 
-      <Link href="/edit-widgets">
+      {/* Middle: toggle edit mode */}
+      <button type="button" onClick={toggleEditMode}>
         <Image
           src="/img/move-widget-icon.svg"
-          alt="Widget"
+          alt="Move widgets"
           width={50}
           height={50}
-          className="drop-shadow-lg"
+          className={`drop-shadow-lg ${
+            editMode ? "opacity-100" : "opacity-70"
+          }`}
         />
-      </Link>
+      </button>
 
-      <Link href="/menu">
+      {/* Right button – menu */}
+      <button type="button">
         <Image
           src="/img/burger-menu-icon.svg"
-          alt="Widget"
+          alt="Menu"
           width={50}
           height={50}
           className="drop-shadow-lg"
         />
-      </Link>
+      </button>
     </nav>
   );
 }
+

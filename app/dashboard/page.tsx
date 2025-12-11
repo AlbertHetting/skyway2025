@@ -6,6 +6,9 @@ import type { WeatherCondition, HourlyForecast } from "../dmi";
 import Running from "@/components/Running";
 import FeelsLike from "@/components/Feelslike";
 import WeeklyWeather from "@/components/WeeklyWeather";
+import Bus from "@/components/Bus";
+import Letbane from "@/components/Letbane";
+import { useEditMode } from "@/app/EditModeContext";
 
 type WeatherResult = {
   temperatureC: number;
@@ -15,6 +18,19 @@ type WeatherResult = {
   condition: WeatherCondition;
   windspeedMs: number | null;
 };
+
+type WidgetRowId = "runningFeels" | "weekly" | "transport";
+
+const DEFAULT_LAYOUT: WidgetRowId[] = [
+  "runningFeels",
+  "weekly",
+  "transport",
+];
+
+const LAYOUT_STORAGE_KEY = "skyway-widget-layout-v1";
+
+
+
 
 
 function getIconForCondition(
@@ -100,6 +116,32 @@ export default function Dashboard() {
   const [weather, setWeather] = useState<WeatherResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ...existing state: coords, weather, loading, error...
+
+const { editMode } = useEditMode(); // 👈 get editMode from context
+  const [layout, setLayout] = useState<WidgetRowId[]>(DEFAULT_LAYOUT);
+
+  const moveRowUp = (index: number) => {
+    if (index === 0) return;
+    setLayout((prev) => {
+      const next = [...prev];
+      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      return next;
+    });
+  };
+
+  const moveRowDown = (index: number) => {
+    setLayout((prev) => {
+      if (index >= prev.length - 1) return prev;
+      const next = [...prev];
+      [next[index + 1], next[index]] = [next[index], next[index + 1]];
+      return next;
+    });
+  };
+
+  // ...your existing now/hour/isDaytime/displayDate/etc...
+
 
   // 1) Get user location (client-side)
   useEffect(() => {
@@ -267,27 +309,84 @@ const bgGradient = getBackgroundGradient(weather?.condition);
           </div>
 
 
-        <div className="flex flex-row justify-center gap-5 mt-5 drop-shadow-xl">
-          <div>
-            <Running
-              temperatureC={weather?.temperatureC ?? null}
-              condition={weather?.condition}
-              windSpeedMs={weather?.windspeedMs ?? null}
-            />
-          </div>
+<div className="mt-5 flex flex-col gap-5 drop-shadow-xl">
+  {layout.map((rowId, index) => {
+    const canMoveUp = index > 0;
+    const canMoveDown = index < layout.length - 1;
 
-              <FeelsLike 
-              temperatureC={weather?.temperatureC ?? null}
-              condition={weather?.condition}
-              windSpeedMs={weather?.windspeedMs ?? null}
-            />
+    const Arrows = () =>
+      editMode ? (
+        <div className="absolute -top-3 left-1/2 flex -translate-x-1/2 gap-2 text-xs">
+          <button
+            disabled={!canMoveUp}
+            onClick={() => moveRowUp(index)}
+            className={canMoveUp ? "opacity-100" : "opacity-30"}
+          >
+            ▲
+          </button>
+          <button
+            disabled={!canMoveDown}
+            onClick={() => moveRowDown(index)}
+            className={canMoveDown ? "opacity-100" : "opacity-30"}
+          >
+            ▼
+          </button>
         </div>
+      ) : null;
 
-        <div className="flex flex-row justify-center drop-shadow-xl">
+            switch (rowId) {
+            case "runningFeels":
+              return (
+                <div
+                  key={rowId + index}
+                  className="relative flex flex-row justify-center gap-5"
+                >
+                  <Arrows />
+                  <Running
+                    temperatureC={weather?.temperatureC ?? null}
+                    condition={weather?.condition}
+                    windSpeedMs={weather?.windspeedMs ?? null}
+                  />
+                  <FeelsLike
+                    temperatureC={weather?.temperatureC ?? null}
+                    condition={weather?.condition}
+                    windSpeedMs={weather?.windspeedMs ?? null}
+                  />
+                </div>
+              );
 
-            <WeeklyWeather
-            />
+            case "weekly":
+              return (
+                <div
+                  key={rowId + index}
+                  className="relative flex flex-col justify-center"
+                >
+                  <Arrows />
+                  <div className="w-85 h-40 bg-white rounded-3xl mt-5">
+                    <WeeklyWeather />
+                  </div>
+                </div>
+              );
 
+            case "transport":
+              return (
+                <div
+                  key={rowId + index}
+                  className="relative flex flex-row justify-center gap-5"
+                >
+                  <Arrows />
+                  {/* put your transport widget(s) here */}
+                  <Bus
+                  />
+                  <Letbane
+                  />
+                </div>
+              );
+
+            default:
+              return null;
+          }
+          })}
         </div>
       </main>
     </div>

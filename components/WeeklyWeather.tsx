@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 // --- Types ---
 type Coord = { lat: number; lon: number };
@@ -89,12 +90,13 @@ export default function WeeklyWeather() {
           icon = "/WeatherTransIcons/Sunny.png";
 
         return (
-          <div className="max-w-85 max-h-40 bg-white rounded-2xl flex flex-col items-center justify-center p-4">
+          <div 
+          key={d.date}
+          className="max-w-85 max-h-40 bg-white rounded-2xl flex flex-col items-center justify-center p-4">
             <div
-              key={d.date}
               className="flex flex-col items-center text-center"
             >
-              <img src={icon} alt="Weather icon" width={40} height={40} />
+              <Image src={icon} alt="Weather icon" width={40} height={40} />
               <p className="font-bold text-2xl">
                 {tempDayC !== null ? tempDayC + "°C" : "--"}
               </p>
