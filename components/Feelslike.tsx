@@ -82,7 +82,7 @@ export default function FeelsLike({
       <div className="w-40 h-40 bg-white rounded-3xl">
         {/* Header: Running + dynamic condition label */}
         <div className="flex flex-row justify-center items-center gap-4 text-[#4D4D4D]">
-          <h1 className="mt-2 ml-1 text-md font-bold">Feels Like</h1>
+          <h1 className="mt-2 ml-1 text-md font-bold">Føles som</h1>
         </div>
 
        
@@ -95,7 +95,7 @@ export default function FeelsLike({
 
             <div className="text-[#4D4D4D] mt-3">
           <h1 className="mt-2 text-lg text-center">
-            Actual {wholeTemp}<span>&#176;</span>
+            Akutel {wholeTemp}<span>&#176;</span>
           </h1>
         </div>
         </div>
