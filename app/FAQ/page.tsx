@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function FAQ() {
   return (
-    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans bg-[linear-gradient(to_bottom,_white_0%,_#C7E4FF_25%,_#C7E4FF_75%,_white_100%)] ">
+    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans bg-[linear-gradient(to_bottom,white_0%,#C7E4FF_25%,#C7E4FF_75%,white_100%)] ">
       <main className="drop-shadow-xl">
         <div className="flex flex-col items-center">
           <div className="w-full flex items-center justify-center pt-5 mb-5">
