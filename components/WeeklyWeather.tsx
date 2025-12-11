@@ -89,8 +89,7 @@ export default function WeeklyWeather() {
           icon = "/WeatherTransIcons/Sunny.png";
 
         return (
-          <div /* className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between" */
-          >
+          <div className="max-w-85 max-h-40 bg-white rounded-2xl flex flex-col items-center justify-center p-4">
             <div
               key={d.date}
               className="flex flex-col items-center text-center"
