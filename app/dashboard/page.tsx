@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { WeatherCondition, HourlyForecast } from "../dmi";
 import Running from "@/components/Running";
+import FeelsLike from "@/components/Feelslike";
 
 type WeatherResult = {
   temperatureC: number;
@@ -14,7 +15,35 @@ type WeatherResult = {
   windspeedMs: number | null;
 };
 
-function getIconForCondition(condition?: WeatherCondition): string {
+
+function getIconForCondition(
+  condition?: WeatherCondition,
+  isDaytime: boolean = true
+): string {
+  // Night icons
+  if (!isDaytime) {
+    switch (condition) {
+      case "sunny":
+        return "/WeatherTransIcons/NightClear.png";      // moon version
+      case "partly-cloudy":
+        return "/WeatherTransIcons/CloudyNight.png";
+      case "cloudy":
+        return "/WeatherTransIcons/Cloudy.png";
+      case "rain":
+      case "drizzle":
+        return "/WeatherTransIcons/Rain.png";
+      case "snow":
+      case "sleet":
+      case "hail":
+        return "/WeatherTransIcons/Snow.png";
+      case "thunder":
+        return "/WeatherTransIcons/Thunder.png";
+      default:
+        return "/WeatherTransIcons/CloudyNight.png";
+    }
+  }
+
+  // Day icons (your current mapping)
   switch (condition) {
     case "sunny":
       return "/WeatherTransIcons/Sunny.png";
@@ -35,7 +64,7 @@ function getIconForCondition(condition?: WeatherCondition): string {
     case "hail":
       return "/WeatherTransIcons/Snow.png";
     default:
-      return "/WeatherTransIcons/CloudyDay.png"; // fallback
+      return "/WeatherTransIcons/CloudyDay.png";
   }
 }
 
@@ -122,19 +151,22 @@ export default function Dashboard() {
   }, [coords]);
 
   // 3) Format temperature and date for display
-  const now = new Date();
-  const displayDate = new Intl.DateTimeFormat("da-DK", {
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Copenhagen",
-  }).format(now);
+const now = new Date();
+const hour = now.getHours();
+const isDaytime = hour >= 7 && hour < 18;
+
+const displayDate = new Intl.DateTimeFormat("da-DK", {
+  weekday: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Europe/Copenhagen",
+}).format(now);
 
   const wholeTemp = weather ? Math.round(weather.temperatureC) : null;
 
-  const mainIconSrc = getIconForCondition(weather?.condition);
-  const mainIconAlt = weather?.condition ?? "Weather icon";
-  const bgGradient = getBackgroundGradient(weather?.condition);
+const mainIconSrc = getIconForCondition(weather?.condition, isDaytime);
+const mainIconAlt = weather?.condition ?? "Weather icon";
+const bgGradient = getBackgroundGradient(weather?.condition);
 
   return (
     <div
@@ -186,50 +218,53 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="mt-[-50] flex justify-center">
-          {/* Window with fixed / max width + horizontal scroll */}
-          <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
-            {/* Your existing styling, just with gap + non-shrinking items */}
-            <div className="flex flex-row">
-              {weather?.hourly?.map((entry, index) => {
-                const date = new Date(entry.time);
-                const isNow = index === 0;
+          <div className="mt-[-50] flex justify-center">
+            <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
+              <div className="flex flex-row">
+                {weather?.hourly?.map((entry, index) => {
+                  const date = new Date(entry.time);
+                  const isNow = index === 0;
 
-                const label = isNow
-                  ? "nu"
-                  : date.toLocaleTimeString("da-DK", {
-                      hour: "2-digit",
-                    });
+                  const label = isNow
+                    ? "nu"
+                    : date.toLocaleTimeString("da-DK", {
+                        hour: "2-digit",
+                      });
 
-                const iconSrc = getIconForCondition(entry.condition);
-                const tempWhole = Math.round(entry.temperatureC);
+                  // compute day/night for THIS forecast hour
+                  const entryHour = date.getHours();
+                  const entryIsDay = entryHour >= 7 && entryHour < 18;
 
-                return (
-                  <div
-                    key={entry.time}
-                    className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
-                  >
-                    <h1 className="text-black font-bold">{label}</h1>
+                  const iconSrc = getIconForCondition(entry.condition, entryIsDay);
+                  const tempWhole = Math.round(entry.temperatureC);
 
-                    <Image
-                      className="mt-[-10]"
-                      src={iconSrc}
-                      alt={entry.condition}
-                      width={50}
-                      height={50}
-                      priority={index === 0}
-                    />
+                  return (
+                    <div
+                      key={entry.time}
+                      className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
+                    >
+                      <h1 className="text-black font-bold">{label}</h1>
 
-                    <h1 className="text-black font-bold mt-[-10]">
-                      {tempWhole}
-                      <span>&#176;</span>
-                    </h1>
-                  </div>
-                );
-              })}
+                      <Image
+                        className="mt-[-10]"
+                        src={iconSrc}
+                        alt={entry.condition}
+                        width={50}
+                        height={50}
+                        priority={index === 0}
+                      />
+
+                      <h1 className="text-black font-bold mt-[-10]">
+                        {tempWhole}
+                        <span>&#176;</span>
+                      </h1>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+
 
         <div className="flex flex-row justify-center gap-5 mt-5 drop-shadow-xl">
           <div>
@@ -240,7 +275,11 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="w-40 h-40 bg-white rounded-3xl "></div>
+              <FeelsLike 
+              temperatureC={weather?.temperatureC ?? null}
+              condition={weather?.condition}
+              windSpeedMs={weather?.windspeedMs ?? null}
+            />
         </div>
 
         <div className="flex flex-row justify-center drop-shadow-xl">
