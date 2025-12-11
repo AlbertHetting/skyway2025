@@ -42,16 +42,13 @@ export default function Letbane() {
   if (!data || data.length === 0) return <p>No data</p>;
 
   return (
-    <main className="flex flex-col w-full h-full p-2 items-center gap-4">
+    <main className="flex flex-col w-40 h-40 p-3 items-center gap-4 overflow-hidden scroll-hide bg-white rounded-2xl p-2 relative">
       {data.map((stationData, idx) => {
         const nextTrams = stationData.nextTrams || [];
         if (nextTrams.length === 0) return <p key={idx}>No tram times</p>;
 
         return (
-          <section
-            key={idx}
-            className="w-full flex flex-col items-center border-b border-gray-200 pb-2"
-          >
+          <section key={idx} className="w-full flex flex-col items-center pb-2">
             {/* Countdown + Clock */}
             <div className="w-full flex justify-between items-center">
               <p className="text-xl">{`${nextTrams[0].minutes} min.`}</p>
