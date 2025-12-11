@@ -27,7 +27,7 @@ export default function Widgets() {
       </section>
 
       {/* Widget Grid */}
-      <section className="grid grid-cols-2 gap-5 justify-items-center w-full max-w-4xl ">
+      <section className="grid grid-cols-2 gap-5 justify-items-center w-85 max-w-4xl ">
         <div className="w-full h-36 bg-white rounded-2xl p-2 relative">
           {/* Overlay icons */}
           <div className="absolute top-2 left-2 right-2 flex justify-between z-10">

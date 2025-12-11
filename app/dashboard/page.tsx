@@ -14,7 +14,6 @@ type WeatherResult = {
   windspeedMs: number | null;
 };
 
-
 function getIconForCondition(condition?: WeatherCondition): string {
   switch (condition) {
     case "sunny":
@@ -32,9 +31,9 @@ function getIconForCondition(condition?: WeatherCondition): string {
     case "sleet":
       return "/WeatherTransIcons/Snow.png";
     case "thunder":
-      return "/WeatherTransIcons/Thunder.png";  
+      return "/WeatherTransIcons/Thunder.png";
     case "hail":
-      return "/WeatherTransIcons/Snow.png"; 
+      return "/WeatherTransIcons/Snow.png";
     default:
       return "/WeatherTransIcons/CloudyDay.png"; // fallback
   }
@@ -56,9 +55,8 @@ function getBackgroundGradient(condition?: WeatherCondition): string {
     case "sleet":
       return "linear-gradient(to bottom, white 0%, #C7E4FF 25%, #C7E4FF 85%, white 100%)";
 
-
-      case "thunder":
-        return "linear-gradient(to bottom, white 0%, #5B5B5B 40%, #F8DC2A 80%, white 100%)";
+    case "thunder":
+      return "linear-gradient(to bottom, white 0%, #5B5B5B 40%, #F8DC2A 80%, white 100%)";
 
     default:
       return "linear-gradient(to bottom, white 0%, #B4B4B4 25%, #B4B4B4 85%, white 100%)";
@@ -112,9 +110,9 @@ export default function Dashboard() {
 
         const data = (await res.json()) as WeatherResult;
         setWeather(data);
-        } catch (err) {
+      } catch (err) {
         const message =
-            err instanceof Error ? err.message : "Kunne ikke hente vejret.";
+          err instanceof Error ? err.message : "Kunne ikke hente vejret.";
         setError(message);
         setLoading(false);
       }
@@ -134,43 +132,34 @@ export default function Dashboard() {
 
   const wholeTemp = weather ? Math.round(weather.temperatureC) : null;
 
-const mainIconSrc = getIconForCondition(weather?.condition);
-const mainIconAlt = weather?.condition ?? "Weather icon";
-const bgGradient = getBackgroundGradient(weather?.condition);
+  const mainIconSrc = getIconForCondition(weather?.condition);
+  const mainIconAlt = weather?.condition ?? "Weather icon";
+  const bgGradient = getBackgroundGradient(weather?.condition);
 
   return (
-    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans"
-    style={{ backgroundImage: bgGradient}}>
+    <div
+      className="flex min-h-screen justify-center bg-zinc-50 font-sans"
+      style={{ backgroundImage: bgGradient }}
+    >
       <main>
-        <div className="flex flex-col items-center">
+        <div className="w-full flex items-center justify-center pt-5">
           <Image
-            className="mt-5"
-            src="/SkywayLogo.png"
-            alt="SkyWay logo"
-            width={70}
-            height={20}
-            priority
+            src="/img/skyway-logo-with-text.svg"
+            alt="Skyway logo"
+            width={200}
+            height={100}
+            className="size-20"
           />
-
-          <h1 className="text-center text-black text-base">SkyWay</h1>
         </div>
 
         <div className="text-black flex flex-col justify-center text-center mt-3">
           {/* You don't have a city name from geolocation, so show "Din lokation" */}
-          <h1 className="text-xl">
-            Din lokation
-          </h1>
+          <h1 className="text-xl">Din lokation</h1>
 
-          {error && (
-            <p className="text-sm text-red-500 mt-1">
-              {error}
-            </p>
-          )}
+          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
 
           {loading && !weather && !error && (
-            <p className="text-sm text-zinc-700 mt-1">
-              Henter vejrdata...
-            </p>
+            <p className="text-sm text-zinc-700 mt-1">Henter vejrdata...</p>
           )}
 
           <h2 className="font-bold text-4xl mt-1">
@@ -186,65 +175,65 @@ const bgGradient = getBackgroundGradient(weather?.condition);
           <h3>{displayDate}</h3>
         </div>
 
-          <div className="flex flex-row justify-center">
-            <Image
-              className="mt-[-40]"
-              src={mainIconSrc}
-              alt={mainIconAlt}
-              width={285}
-              height={285} // or whatever size you actually want
-              priority
-            />
+        <div className="flex flex-row justify-center">
+          <Image
+            className="mt-[-40]"
+            src={mainIconSrc}
+            alt={mainIconAlt}
+            width={285}
+            height={285} // or whatever size you actually want
+            priority
+          />
+        </div>
+
+        <div className="mt-[-50] flex justify-center">
+          {/* Window with fixed / max width + horizontal scroll */}
+          <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
+            {/* Your existing styling, just with gap + non-shrinking items */}
+            <div className="flex flex-row">
+              {weather?.hourly?.map((entry, index) => {
+                const date = new Date(entry.time);
+                const isNow = index === 0;
+
+                const label = isNow
+                  ? "nu"
+                  : date.toLocaleTimeString("da-DK", {
+                      hour: "2-digit",
+                    });
+
+                const iconSrc = getIconForCondition(entry.condition);
+                const tempWhole = Math.round(entry.temperatureC);
+
+                return (
+                  <div
+                    key={entry.time}
+                    className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
+                  >
+                    <h1 className="text-black font-bold">{label}</h1>
+
+                    <Image
+                      className="mt-[-10]"
+                      src={iconSrc}
+                      alt={entry.condition}
+                      width={50}
+                      height={50}
+                      priority={index === 0}
+                    />
+
+                    <h1 className="text-black font-bold mt-[-10]">
+                      {tempWhole}
+                      <span>&#176;</span>
+                    </h1>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-
-<div className="mt-[-50] flex justify-center">
-  {/* Window with fixed / max width + horizontal scroll */}
-  <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
-    {/* Your existing styling, just with gap + non-shrinking items */}
-    <div className="flex flex-row">
-      {weather?.hourly?.map((entry, index) => {
-        const date = new Date(entry.time);
-        const isNow = index === 0;
-
-        const label = isNow
-          ? "nu"
-          : date.toLocaleTimeString("da-DK", {
-              hour: "2-digit",
-            });
-
-        const iconSrc = getIconForCondition(entry.condition);
-        const tempWhole = Math.round(entry.temperatureC);
-
-        return (
-          <div
-            key={entry.time}
-            className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
-          >
-            <h1 className="text-black font-bold">{label}</h1>
-
-            <Image
-              className="mt-[-10]"
-              src={iconSrc}
-              alt={entry.condition}
-              width={50}
-              height={50}
-              priority={index === 0}
-            />
-
-            <h1 className="text-black font-bold mt-[-10]">
-              {tempWhole}
-              <span>&#176;</span>
-            </h1>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-</div>
+        </div>
 
         <div className="flex flex-row justify-center gap-5 mt-5 drop-shadow-xl">
           <div>
-            <Running 
+            <Running
               temperatureC={weather?.temperatureC ?? null}
               condition={weather?.condition}
               windSpeedMs={weather?.windspeedMs ?? null}

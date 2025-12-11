@@ -70,7 +70,7 @@ export default function Letbane() {
             <div className="w-full text-xs font-medium">
               <p>Mod {stationData.destination}</p>
 
-              <div className="flex -mx-4 mt-1 overflow-x-auto snap-x snap-mandatory">
+              <div className="flex -mx-4 mt-1 overflow-x-auto snap-x snap-mandatory scroll-hide">
                 {nextTrams.map((tram, tIdx) => (
                   <div
                     key={tIdx}
