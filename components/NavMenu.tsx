@@ -19,6 +19,16 @@ export default function NavMenu() {
         />
       </Link>
 
+      <Link href="/dashboard">
+        <Image
+          src="/img/nav-icon-dashboard.svg"
+          alt="Widget"
+          width={50}
+          height={50}
+          className="drop-shadow-lg"
+        />
+      </Link>
+
       <Image
         src="/img/exit-icon-black.svg"
         alt="Exit"

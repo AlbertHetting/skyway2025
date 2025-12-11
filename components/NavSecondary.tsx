@@ -19,6 +19,16 @@ export default function NavSecondary() {
         />
       </Link>
 
+      <Link href="/dashboard">
+        <Image
+          src="/img/nav-icon-dashboard.svg"
+          alt="Widget"
+          width={50}
+          height={50}
+          className="drop-shadow-lg"
+        />
+      </Link>
+
       <Link href="/menu">
         <Image
           src="/img/burger-menu-icon.svg"
