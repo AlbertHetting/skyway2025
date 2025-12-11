@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 
+type Coords = {
+  lat: number;
+  lon: number;
+};
+
 export function useGeolocation() {
-  const [coords, setCoords] = useState(null);
-  const [error, setError] = useState(null);
+  const [coords, setCoords] = useState<Coords | null>(null);
+  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false);
 
   function requestLocation() {
@@ -17,7 +22,7 @@ export function useGeolocation() {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
+navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCoords({
           lat: pos.coords.latitude,
