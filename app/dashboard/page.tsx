@@ -21,17 +21,9 @@ type WeatherResult = {
 
 type WidgetRowId = "runningFeels" | "weekly" | "transport";
 
-const DEFAULT_LAYOUT: WidgetRowId[] = [
-  "runningFeels",
-  "weekly",
-  "transport",
-];
+const DEFAULT_LAYOUT: WidgetRowId[] = ["runningFeels", "weekly", "transport"];
 
 const LAYOUT_STORAGE_KEY = "skyway-widget-layout-v1";
-
-
-
-
 
 function getIconForCondition(
   condition?: WeatherCondition,
@@ -41,7 +33,7 @@ function getIconForCondition(
   if (!isDaytime) {
     switch (condition) {
       case "sunny":
-        return "/WeatherTransIcons/NightClear.png";      // moon version
+        return "/WeatherTransIcons/NightClear.png"; // moon version
       case "partly-cloudy":
         return "/WeatherTransIcons/CloudyNight.png";
       case "cloudy":
@@ -119,7 +111,7 @@ export default function Dashboard() {
 
   // ...existing state: coords, weather, loading, error...
 
-const { editMode } = useEditMode(); // 👈 get editMode from context
+  const { editMode } = useEditMode(); // 👈 get editMode from context
   const [layout, setLayout] = useState<WidgetRowId[]>(DEFAULT_LAYOUT);
 
   const moveRowUp = (index: number) => {
@@ -141,7 +133,6 @@ const { editMode } = useEditMode(); // 👈 get editMode from context
   };
 
   // ...your existing now/hour/isDaytime/displayDate/etc...
-
 
   // 1) Get user location (client-side)
   useEffect(() => {
@@ -194,22 +185,22 @@ const { editMode } = useEditMode(); // 👈 get editMode from context
   }, [coords]);
 
   // 3) Format temperature and date for display
-const now = new Date();
-const hour = now.getHours();
-const isDaytime = hour >= 7 && hour < 18;
+  const now = new Date();
+  const hour = now.getHours();
+  const isDaytime = hour >= 7 && hour < 18;
 
-const displayDate = new Intl.DateTimeFormat("da-DK", {
-  weekday: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "Europe/Copenhagen",
-}).format(now);
+  const displayDate = new Intl.DateTimeFormat("da-DK", {
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Copenhagen",
+  }).format(now);
 
   const wholeTemp = weather ? Math.round(weather.temperatureC) : null;
 
-const mainIconSrc = getIconForCondition(weather?.condition, isDaytime);
-const mainIconAlt = weather?.condition ?? "Weather icon";
-const bgGradient = getBackgroundGradient(weather?.condition);
+  const mainIconSrc = getIconForCondition(weather?.condition, isDaytime);
+  const mainIconAlt = weather?.condition ?? "Weather icon";
+  const bgGradient = getBackgroundGradient(weather?.condition);
 
   return (
     <div
@@ -261,135 +252,132 @@ const bgGradient = getBackgroundGradient(weather?.condition);
           />
         </div>
 
-          <div className="mt-[-50] flex justify-center">
-            <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
-              <div className="flex flex-row">
-                {weather?.hourly?.map((entry, index) => {
-                  const date = new Date(entry.time);
-                  const isNow = index === 0;
+        <div className="mt-[-50] flex justify-center">
+          <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
+            <div className="flex flex-row">
+              {weather?.hourly?.map((entry, index) => {
+                const date = new Date(entry.time);
+                const isNow = index === 0;
 
-                  const label = isNow
-                    ? "nu"
-                    : date.toLocaleTimeString("da-DK", {
-                        hour: "2-digit",
-                      });
+                const label = isNow
+                  ? "nu"
+                  : date.toLocaleTimeString("da-DK", {
+                      hour: "2-digit",
+                    });
 
-                  // compute day/night for THIS forecast hour
-                  const entryHour = date.getHours();
-                  const entryIsDay = entryHour >= 7 && entryHour < 18;
+                // compute day/night for THIS forecast hour
+                const entryHour = date.getHours();
+                const entryIsDay = entryHour >= 7 && entryHour < 18;
 
-                  const iconSrc = getIconForCondition(entry.condition, entryIsDay);
-                  const tempWhole = Math.round(entry.temperatureC);
+                const iconSrc = getIconForCondition(
+                  entry.condition,
+                  entryIsDay
+                );
+                const tempWhole = Math.round(entry.temperatureC);
 
-                  return (
-                    <div
-                      key={entry.time}
-                      className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
-                    >
-                      <h1 className="text-black font-bold">{label}</h1>
+                return (
+                  <div
+                    key={entry.time}
+                    className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
+                  >
+                    <h1 className="text-black font-bold">{label}</h1>
 
-                      <Image
-                        className="mt-[-10]"
-                        src={iconSrc}
-                        alt={entry.condition}
-                        width={50}
-                        height={50}
-                        priority={index === 0}
-                      />
+                    <Image
+                      className="mt-[-10]"
+                      src={iconSrc}
+                      alt={entry.condition}
+                      width={50}
+                      height={50}
+                      priority={index === 0}
+                    />
 
-                      <h1 className="text-black font-bold mt-[-10]">
-                        {tempWhole}
-                        <span>&#176;</span>
-                      </h1>
-                    </div>
-                  );
-                })}
-              </div>
+                    <h1 className="text-black font-bold mt-[-10]">
+                      {tempWhole}
+                      <span>&#176;</span>
+                    </h1>
+                  </div>
+                );
+              })}
             </div>
           </div>
-
-
-<div className="mt-5 flex flex-col gap-5 drop-shadow-xl">
-  {layout.map((rowId, index) => {
-    const canMoveUp = index > 0;
-    const canMoveDown = index < layout.length - 1;
-
-    const Arrows = () =>
-      editMode ? (
-        <div className="absolute -top-3 left-1/2 flex -translate-x-1/2 gap-2 text-xs">
-          <button
-            disabled={!canMoveUp}
-            onClick={() => moveRowUp(index)}
-            className={canMoveUp ? "opacity-100" : "opacity-30"}
-          >
-            ▲
-          </button>
-          <button
-            disabled={!canMoveDown}
-            onClick={() => moveRowDown(index)}
-            className={canMoveDown ? "opacity-100" : "opacity-30"}
-          >
-            ▼
-          </button>
         </div>
-      ) : null;
+
+        <div className="mt-5 flex flex-col gap-5 drop-shadow-xl">
+          {layout.map((rowId, index) => {
+            const canMoveUp = index > 0;
+            const canMoveDown = index < layout.length - 1;
+
+            const Arrows = () =>
+              editMode ? (
+                <div className="absolute -top-3 left-1/2 flex -translate-x-1/2 gap-2 text-xs">
+                  <button
+                    disabled={!canMoveUp}
+                    onClick={() => moveRowUp(index)}
+                    className={canMoveUp ? "opacity-100" : "opacity-30"}
+                  >
+                    ▲
+                  </button>
+                  <button
+                    disabled={!canMoveDown}
+                    onClick={() => moveRowDown(index)}
+                    className={canMoveDown ? "opacity-100" : "opacity-30"}
+                  >
+                    ▼
+                  </button>
+                </div>
+              ) : null;
 
             switch (rowId) {
-            case "runningFeels":
-              return (
-                <div
-                  key={rowId + index}
-                  className="relative flex flex-row justify-center gap-5"
-                >
-                  <Arrows />
-                  <Running
-                    temperatureC={weather?.temperatureC ?? null}
-                    condition={weather?.condition}
-                    windSpeedMs={weather?.windspeedMs ?? null}
-                  />
-                  <FeelsLike
-                    temperatureC={weather?.temperatureC ?? null}
-                    condition={weather?.condition}
-                    windSpeedMs={weather?.windspeedMs ?? null}
-                  />
-                </div>
-              );
+              case "runningFeels":
+                return (
+                  <div
+                    key={rowId + index}
+                    className="relative flex flex-row justify-center gap-5"
+                  >
+                    <Arrows />
+                    <Running
+                      temperatureC={weather?.temperatureC ?? null}
+                      condition={weather?.condition}
+                      windSpeedMs={weather?.windspeedMs ?? null}
+                    />
+                    <FeelsLike
+                      temperatureC={weather?.temperatureC ?? null}
+                      condition={weather?.condition}
+                      windSpeedMs={weather?.windspeedMs ?? null}
+                    />
+                  </div>
+                );
 
-            case "weekly":
-              return (
-                <div
-                  key={rowId + index}
-                  className="relative flex flex-col justify-center"
-                >
-                  <Arrows />
-                  <div className="w-85 h-40 bg-white rounded-3xl mt-5">
+              case "weekly":
+                return (
+                  <div
+                    key={rowId + index}
+                    className="relative flex flex-col justify-center items-center"
+                  >
+                    <Arrows />
                     <WeeklyWeather />
                   </div>
-                </div>
-              );
+                );
 
-            case "transport":
-              return (
-                <div
-                  key={rowId + index}
-                  className="relative flex flex-row justify-center gap-5"
-                >
-                  <Arrows />
-                  {/* put your transport widget(s) here */}
-                  <Bus
-                  />
-                  <Letbane
-                  />
-                </div>
-              );
+              case "transport":
+                return (
+                  <div
+                    key={rowId + index}
+                    className="relative flex flex-row justify-center gap-5"
+                  >
+                    <Arrows />
+                    {/* put your transport widget(s) here */}
+                    <Bus />
+                    <Letbane />
+                  </div>
+                );
 
-            default:
-              return null;
-          }
+              default:
+                return null;
+            }
           })}
         </div>
       </main>
     </div>
   );
 }
-

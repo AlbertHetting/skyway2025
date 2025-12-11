@@ -80,37 +80,35 @@ export default function WeeklyWeather() {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <section className="grid grid-cols-3 gap-15 justify-items-center">
-      {forecast.map((d) => {
-        const tempDayC =
-          d.tempDay !== undefined ? Math.round(d.tempDay - 273.15) : null;
+    <div className="w-85 h-40 bg-white rounded-3xl mt-5 flex flex-col items-center justify-center p-4">
+      <section className="grid grid-cols-3 gap-15 justify-items-center">
+        {forecast.map((d) => {
+          const tempDayC =
+            d.tempDay !== undefined ? Math.round(d.tempDay - 273.15) : null;
 
-        let icon = "/WeatherTransIcons/Cloudy.png";
-        if (tempDayC !== null && tempDayC > 8)
-          icon = "/WeatherTransIcons/Sunny.png";
+          let icon = "/WeatherTransIcons/Cloudy.png";
+          if (tempDayC !== null && tempDayC > 8)
+            icon = "/WeatherTransIcons/Sunny.png";
 
-        return (
-          <div 
-          key={d.date}
-          className="max-w-85 max-h-40 bg-white rounded-2xl flex flex-col items-center justify-center p-4">
-            <div
-              className="flex flex-col items-center text-center"
-            >
-              <Image src={icon} alt="Weather icon" width={40} height={40} />
-              <p className="font-bold text-2xl">
-                {tempDayC !== null ? tempDayC + "°C" : "--"}
-              </p>
-              <p className="text-sm">
-                {d.tempNight !== undefined
-                  ? Math.round(d.tempNight - 273.15) + "°C"
-                  : "--"}
-              </p>
-              <div className="font-bold">{d.weekday}</div>
+          return (
+            <div key={d.date}>
+              <div className="flex flex-col items-center text-center">
+                <Image src={icon} alt="Weather icon" width={40} height={40} />
+                <p className="font-bold text-2xl">
+                  {tempDayC !== null ? tempDayC + "°C" : "--"}
+                </p>
+                <p className="text-sm">
+                  {d.tempNight !== undefined
+                    ? Math.round(d.tempNight - 273.15) + "°C"
+                    : "--"}
+                </p>
+                <div className="font-bold">{d.weekday}</div>
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </section>
+          );
+        })}
+      </section>
+    </div>
   );
 }
 
