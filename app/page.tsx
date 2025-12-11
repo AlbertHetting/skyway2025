@@ -10,7 +10,7 @@ export default function SplashPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push("/dashboard");
-    }, 5000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [router]);

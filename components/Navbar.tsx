@@ -12,8 +12,11 @@ export default function Navbar() {
 
   const isDashboard = pathname.startsWith("/dashboard");
   const isMenu = pathname.startsWith("/menu");
+  const isSplash = pathname === "/";
   const isSecondary =
     pathname.startsWith("/FAQ") || pathname.startsWith("/widgets");
+
+  if (isSplash) return null;
 
   return (
     <>
