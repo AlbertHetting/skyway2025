@@ -38,17 +38,6 @@ export default function Widgets() {
         </div>
 
         <div>
-          {/* Overlay icons */}
-          <div className="absolute top-2 left-2 right-2 flex justify-between z-10">
-            <Image src="/img/add-icon.svg" alt="add" width={40} height={40} />
-            <Image
-              src="/img/heart-icon.svg"
-              alt="heart"
-              width={40}
-              height={40}
-            />
-          </div>
-
           {/* Letbane content */}
           <div>
             <Letbane />
