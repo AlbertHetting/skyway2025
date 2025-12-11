@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { EditModeProvider } from "./EditModeContext";
+import NavDash from "@/components/NavDash"; // adjust path if needed
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative overflow-hidden bg-gray-100`}
       >
+        <EditModeProvider>
         {/* Main content scrollable */}
         <main className="min-h-screen w-full overflow-auto pb-24">
           {children}
@@ -35,6 +39,7 @@ export default function RootLayout({
         <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 ">
           <Navbar />
         </footer>
+        </EditModeProvider>
       </body>
     </html>
   );
