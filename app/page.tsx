@@ -1,6 +1,20 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SplashPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push("/dashboard");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
     <main className="flex flex-col items-center justify-between py-5 min-h-screen bg-[url('/img/splash-background.svg')]">
       <div className="w-1/2 flex relative mt-60">
