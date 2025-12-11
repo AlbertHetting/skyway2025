@@ -289,3 +289,4 @@ const bgGradient = getBackgroundGradient(weather?.condition);
     </div>
   );
 }
+
