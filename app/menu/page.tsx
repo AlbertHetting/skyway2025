@@ -5,7 +5,7 @@ export default function Menu() {
   return (
     <main className="w-full h-screen bg-fixed bg-fixred bg-center bg-[url('/img/sunny-bg-with-sunicon.svg')]">
       {/* logo */}
-      <div className="w-full flex items-center justify-center pt-5">
+      <div className="w-full flex items-center justify-center pt-5 mb-5">
         <Image
           src="/img/skyway-logo-with-text.svg"
           alt="Skyway logo"
@@ -14,6 +14,8 @@ export default function Menu() {
           className="size-20"
         />
       </div>
+
+      <h1 className="text-center text-black text-4xl font-bold">Menu</h1>
 
       {/* menu */}
       <section className="grid grid-cols-1 gap-5 mt-45 justify-items-center">
