@@ -13,25 +13,20 @@ import { useEditMode } from "@/app/EditModeContext";
 type WeatherResult = {
   temperatureC: number;
   time: string | null;
-  hourly: HourlyForecast[]; // 👈 add this
+  hourly: HourlyForecast[];
   cloudFrac: number | null;
   condition: WeatherCondition;
   windspeedMs: number | null;
 };
 
-type WidgetRowId = "runningFeels" | "weekly" | "transport";
+type SmallWidgetId = "running" | "feelsLike" | "bus" | "letbane";
 
-const DEFAULT_LAYOUT: WidgetRowId[] = [
-  "runningFeels",
-  "weekly",
-  "transport",
+const DEFAULT_SMALL_LAYOUT: SmallWidgetId[] = [
+  "running",
+  "feelsLike",
+  "bus",
+  "letbane",
 ];
-
-const LAYOUT_STORAGE_KEY = "skyway-widget-layout-v1";
-
-
-
-
 
 function getIconForCondition(
   condition?: WeatherCondition,
@@ -41,7 +36,7 @@ function getIconForCondition(
   if (!isDaytime) {
     switch (condition) {
       case "sunny":
-        return "/WeatherTransIcons/NightClear.png";      // moon version
+        return "/WeatherTransIcons/NightClear.png";
       case "partly-cloudy":
         return "/WeatherTransIcons/CloudyNight.png";
       case "cloudy":
@@ -60,7 +55,7 @@ function getIconForCondition(
     }
   }
 
-  // Day icons (your current mapping)
+  // Day icons
   switch (condition) {
     case "sunny":
       return "/WeatherTransIcons/Sunny.png";
@@ -117,31 +112,52 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ...existing state: coords, weather, loading, error...
+  const { editMode } = useEditMode();
 
-const { editMode } = useEditMode(); // 👈 get editMode from context
-  const [layout, setLayout] = useState<WidgetRowId[]>(DEFAULT_LAYOUT);
+  const [smallLayout, setSmallLayout] = useState<SmallWidgetId[]>(
+    DEFAULT_SMALL_LAYOUT
+  );
 
-  const moveRowUp = (index: number) => {
-    if (index === 0) return;
-    setLayout((prev) => {
+  // ---- movement helpers for small widgets (inside component!) ----
+  const swapSmallWidgets = (fromIndex: number, toIndex: number) => {
+    setSmallLayout((prev) => {
+      if (
+        toIndex < 0 ||
+        toIndex >= prev.length ||
+        fromIndex < 0 ||
+        fromIndex >= prev.length
+      ) {
+        return prev;
+      }
       const next = [...prev];
-      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
       return next;
     });
   };
 
-  const moveRowDown = (index: number) => {
-    setLayout((prev) => {
-      if (index >= prev.length - 1) return prev;
-      const next = [...prev];
-      [next[index + 1], next[index]] = [next[index], next[index + 1]];
-      return next;
-    });
+  const moveSmallUp = (index: number) => {
+    // one row up in 2-column grid => index - 2
+    swapSmallWidgets(index, index - 2);
   };
 
-  // ...your existing now/hour/isDaytime/displayDate/etc...
+  const moveSmallDown = (index: number) => {
+    // one row down => index + 2
+    swapSmallWidgets(index, index + 2);
+  };
 
+  const moveSmallLeft = (index: number) => {
+    // left only if in right column (odd index)
+    if (index % 2 === 1) {
+      swapSmallWidgets(index, index - 1);
+    }
+  };
+
+  const moveSmallRight = (index: number) => {
+    // right only if in left column (even index)
+    if (index % 2 === 0 && index + 1 < smallLayout.length) {
+      swapSmallWidgets(index, index + 1);
+    }
+  };
 
   // 1) Get user location (client-side)
   useEffect(() => {
@@ -194,22 +210,22 @@ const { editMode } = useEditMode(); // 👈 get editMode from context
   }, [coords]);
 
   // 3) Format temperature and date for display
-const now = new Date();
-const hour = now.getHours();
-const isDaytime = hour >= 7 && hour < 18;
+  const now = new Date();
+  const hour = now.getHours();
+  const isDaytime = hour >= 7 && hour < 18;
 
-const displayDate = new Intl.DateTimeFormat("da-DK", {
-  weekday: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "Europe/Copenhagen",
-}).format(now);
+  const displayDate = new Intl.DateTimeFormat("da-DK", {
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Copenhagen",
+  }).format(now);
 
   const wholeTemp = weather ? Math.round(weather.temperatureC) : null;
 
-const mainIconSrc = getIconForCondition(weather?.condition, isDaytime);
-const mainIconAlt = weather?.condition ?? "Weather icon";
-const bgGradient = getBackgroundGradient(weather?.condition);
+  const mainIconSrc = getIconForCondition(weather?.condition, isDaytime);
+  const mainIconAlt = weather?.condition ?? "Weather icon";
+  const bgGradient = getBackgroundGradient(weather?.condition);
 
   return (
     <div
@@ -228,7 +244,6 @@ const bgGradient = getBackgroundGradient(weather?.condition);
         </div>
 
         <div className="text-black flex flex-col justify-center text-center mt-3">
-          {/* You don't have a city name from geolocation, so show "Din lokation" */}
           <h1 className="text-xl">Din lokation</h1>
 
           {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
@@ -256,137 +271,171 @@ const bgGradient = getBackgroundGradient(weather?.condition);
             src={mainIconSrc}
             alt={mainIconAlt}
             width={285}
-            height={285} // or whatever size you actually want
+            height={285}
             priority
           />
         </div>
 
-          <div className="mt-[-50] flex justify-center">
-            <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
-              <div className="flex flex-row">
-                {weather?.hourly?.map((entry, index) => {
-                  const date = new Date(entry.time);
-                  const isNow = index === 0;
+        {/* HOURLY STRIP (static) */}
+        <div className="mt-[-50] flex justify-center">
+          <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
+            <div className="flex flex-row">
+              {weather?.hourly?.map((entry, index) => {
+                const date = new Date(entry.time);
+                const isNow = index === 0;
 
-                  const label = isNow
-                    ? "nu"
-                    : date.toLocaleTimeString("da-DK", {
-                        hour: "2-digit",
-                      });
+                const label = isNow
+                  ? "nu"
+                  : date.toLocaleTimeString("da-DK", {
+                      hour: "2-digit",
+                    });
 
-                  // compute day/night for THIS forecast hour
-                  const entryHour = date.getHours();
-                  const entryIsDay = entryHour >= 7 && entryHour < 18;
+                const entryHour = date.getHours();
+                const entryIsDay = entryHour >= 7 && entryHour < 18;
 
-                  const iconSrc = getIconForCondition(entry.condition, entryIsDay);
-                  const tempWhole = Math.round(entry.temperatureC);
+                const iconSrc = getIconForCondition(entry.condition, entryIsDay);
+                const tempWhole = Math.round(entry.temperatureC);
 
-                  return (
-                    <div
-                      key={entry.time}
-                      className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
-                    >
-                      <h1 className="text-black font-bold">{label}</h1>
+                return (
+                  <div
+                    key={entry.time}
+                    className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
+                  >
+                    <h1 className="text-black font-bold">{label}</h1>
 
-                      <Image
-                        className="mt-[-10]"
-                        src={iconSrc}
-                        alt={entry.condition}
-                        width={50}
-                        height={50}
-                        priority={index === 0}
-                      />
+                    <Image
+                      className="mt-[-10]"
+                      src={iconSrc}
+                      alt={entry.condition}
+                      width={50}
+                      height={50}
+                      priority={index === 0}
+                    />
 
-                      <h1 className="text-black font-bold mt-[-10]">
-                        {tempWhole}
-                        <span>&#176;</span>
-                      </h1>
-                    </div>
-                  );
-                })}
-              </div>
+                    <h1 className="text-black font-bold mt-[-10]">
+                      {tempWhole}
+                      <span>&#176;</span>
+                    </h1>
+                  </div>
+                );
+              })}
             </div>
           </div>
-
-
-<div className="mt-5 flex flex-col gap-5 drop-shadow-xl">
-  {layout.map((rowId, index) => {
-    const canMoveUp = index > 0;
-    const canMoveDown = index < layout.length - 1;
-
-    const Arrows = () =>
-      editMode ? (
-        <div className="absolute -top-3 left-1/2 flex -translate-x-1/2 gap-2 text-xs">
-          <button
-            disabled={!canMoveUp}
-            onClick={() => moveRowUp(index)}
-            className={canMoveUp ? "opacity-100" : "opacity-30"}
-          >
-            ▲
-          </button>
-          <button
-            disabled={!canMoveDown}
-            onClick={() => moveRowDown(index)}
-            className={canMoveDown ? "opacity-100" : "opacity-30"}
-          >
-            ▼
-          </button>
         </div>
-      ) : null;
 
-            switch (rowId) {
-            case "runningFeels":
+        {/* SMALL WIDGET GRID (movable with arrows) */}
+        <div className="mt-5 flex justify-center">
+          <div className="grid grid-cols-2 gap-5">
+            {smallLayout.map((id, index) => {
+              let content: JSX.Element | null = null;
+
+              switch (id) {
+                case "running":
+                  content = (
+                    <Running
+                      temperatureC={weather?.temperatureC ?? null}
+                      condition={weather?.condition}
+                      windSpeedMs={weather?.windspeedMs ?? null}
+                    />
+                  );
+                  break;
+
+                case "feelsLike":
+                  content = (
+                    <FeelsLike
+                      temperatureC={weather?.temperatureC ?? null}
+                      condition={weather?.condition}
+                      windSpeedMs={weather?.windspeedMs ?? null}
+                    />
+                  );
+                  break;
+
+                case "bus":
+                  content = <Bus />;
+                  break;
+
+                case "letbane":
+                  content = <Letbane />;
+                  break;
+              }
+
               return (
                 <div
-                  key={rowId + index}
-                  className="relative flex flex-row justify-center gap-5"
+                  key={id}
+                  className="relative w-40 h-40 bg-white rounded-3xl drop-shadow-xl flex items-center justify-center"
                 >
-                  <Arrows />
-                  <Running
-                    temperatureC={weather?.temperatureC ?? null}
-                    condition={weather?.condition}
-                    windSpeedMs={weather?.windspeedMs ?? null}
-                  />
-                  <FeelsLike
-                    temperatureC={weather?.temperatureC ?? null}
-                    condition={weather?.condition}
-                    windSpeedMs={weather?.windspeedMs ?? null}
-                  />
+                  {content}
+
+                  {editMode && (
+                    <>
+                      {/* UP */}
+                      <button
+                        type="button"
+                        onClick={() => moveSmallUp(index)}
+                        className="absolute top-1 left-1/2 -translate-x-1/2"
+                      >
+                        <Image
+                          src="/UiIcons/MoveUp.png"
+                          alt="Move up"
+                          width={50}
+                          height={50}
+                        />
+                      </button>
+
+                      {/* DOWN */}
+                      <button
+                        type="button"
+                        onClick={() => moveSmallDown(index)}
+                        className="absolute bottom-1 left-1/2 -translate-x-1/2"
+                      >
+                        <Image
+                          src="/UiIcons/MoveDown.png"
+                          alt="Move down"
+                          width={50}
+                          height={50}
+                        />
+                      </button>
+
+                      {/* LEFT */}
+                      <button
+                        type="button"
+                        onClick={() => moveSmallLeft(index)}
+                        className="absolute top-1/2 left-1 -translate-y-1/2"
+                      >
+                        <Image
+                          src="/UiIcons/MoveLeft.png"
+                          alt="Move left"
+                          width={50}
+                          height={50}
+                        />
+                      </button>
+
+                      {/* RIGHT */}
+                      <button
+                        type="button"
+                        onClick={() => moveSmallRight(index)}
+                        className="absolute top-1/2 right-1 -translate-y-1/2"
+                      >
+                        <Image
+                          src="/UiIcons/MoveRight.png"
+                          alt="Move right"
+                          width={50}
+                          height={50}
+                        />
+                      </button>
+                    </>
+                  )}
                 </div>
               );
+            })}
+          </div>
+        </div>
 
-            case "weekly":
-              return (
-                <div
-                  key={rowId + index}
-                  className="relative flex flex-col justify-center"
-                >
-                  <Arrows />
-                  <div className="w-85 h-40 bg-white rounded-3xl mt-5">
-                    <WeeklyWeather />
-                  </div>
-                </div>
-              );
-
-            case "transport":
-              return (
-                <div
-                  key={rowId + index}
-                  className="relative flex flex-row justify-center gap-5"
-                >
-                  <Arrows />
-                  {/* put your transport widget(s) here */}
-                  <Bus
-                  />
-                  <Letbane
-                  />
-                </div>
-              );
-
-            default:
-              return null;
-          }
-          })}
+        {/* WEEKLY WIDGET (static below grid) */}
+        <div className="flex flex-row justify-center drop-shadow-xl mt-5">
+          <div className="w-85 h-40 bg-white rounded-3xl">
+            <WeeklyWeather />
+          </div>
         </div>
       </main>
     </div>
