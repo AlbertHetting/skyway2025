@@ -89,17 +89,23 @@ export default function WeeklyWeather() {
           icon = "/WeatherTransIcons/Sunny.png";
 
         return (
-          <div key={d.date} className="flex flex-col items-center text-center">
-            <img src={icon} alt="Weather icon" width={40} height={40} />
-            <p className="font-bold text-2xl">
-              {tempDayC !== null ? tempDayC + "°C" : "--"}
-            </p>
-            <p className="text-sm">
-              {d.tempNight !== undefined
-                ? Math.round(d.tempNight - 273.15) + "°C"
-                : "--"}
-            </p>
-            <div className="font-bold">{d.weekday}</div>
+          <div /* className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between" */
+          >
+            <div
+              key={d.date}
+              className="flex flex-col items-center text-center"
+            >
+              <img src={icon} alt="Weather icon" width={40} height={40} />
+              <p className="font-bold text-2xl">
+                {tempDayC !== null ? tempDayC + "°C" : "--"}
+              </p>
+              <p className="text-sm">
+                {d.tempNight !== undefined
+                  ? Math.round(d.tempNight - 273.15) + "°C"
+                  : "--"}
+              </p>
+              <div className="font-bold">{d.weekday}</div>
+            </div>
           </div>
         );
       })}
