@@ -62,11 +62,11 @@ function computeRunningLabel(
   if (score < 0) score = 0;
   if (score > 10) score = 10;
 
-  if (score === 0) return "Excellent";
-  if (score <= 3) return "Good";
+  if (score === 0) return "Super";
+  if (score <= 3) return "Godt";
   if (score <= 5) return "Okay";
-  if (score <= 7) return "Bad";
-  return "Terrible";
+  if (score <= 7) return "Dårligt";
+  return "Meget Dårligt";
 }
 
 // Same icon mapping as your main dashboard
@@ -107,7 +107,7 @@ export default function Running({
 
   const windText =
     typeof windSpeedMs === "number"
-      ? `Wind speed up to ${windSpeedMs.toFixed(1)} m/s`
+      ? `Vind Hastighed up to ${windSpeedMs.toFixed(1)} m/s`
       : "Wind speed unavailable";
 
   return (
@@ -115,7 +115,7 @@ export default function Running({
       <div className="w-40 h-40 bg-white rounded-3xl">
         {/* Header: Running + dynamic condition label */}
         <div className="flex flex-row justify-center items-center gap-4 text-[#4D4D4D]">
-          <h1 className="mt-2 ml-1 text-md font-bold">Running</h1>
+          <h1 className="mt-2 ml-1 text-md font-bold">Løb</h1>
           <h1 className="mt-2 text-xs">
             {runningLabel}
           </h1>
@@ -145,7 +145,7 @@ export default function Running({
         {/* Bottom: current weather condition icon */}
         <div className="flex flex-col justify-center items-center mt-0">
           <h1 className="text-[#4D4D4D] text-center text-xs font-bold">
-            Conditions
+            Nuværende
           </h1>
           <Image
             className="mt-[-4]"

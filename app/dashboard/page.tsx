@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { WeatherCondition, HourlyForecast } from "../dmi";
 import Running from "@/components/Running";
 import FeelsLike from "@/components/Feelslike";
+import WeeklyWeather from "@/components/WeeklyWeather";
 
 type WeatherResult = {
   temperatureC: number;
@@ -283,7 +284,10 @@ const bgGradient = getBackgroundGradient(weather?.condition);
         </div>
 
         <div className="flex flex-row justify-center drop-shadow-xl">
-          <div className="w-85 h-40 bg-white rounded-3xl mt-5"></div>
+
+            <WeeklyWeather
+            />
+
         </div>
       </main>
     </div>
