@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Menu() {
   return (
-    <main className="w-full h-screen bg-fixed bg-fixred bg-center bg-[url('/img/sunny-bg-with-sunicon.svg')]">
+    <main className="w-full h-screen mb-20 bg-fixed bg-fixred bg-center text-[#4D4D4D] bg-[url('/img/sunny-bg-with-sunicon.svg')]">
       {/* logo */}
       <div className="w-full flex items-center justify-center pt-5 mb-5">
         <Image
