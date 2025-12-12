@@ -438,11 +438,10 @@ export default function Dashboard() {
                           onClick={() => moveSmallUp(index)}
                           className="absolute top-1 left-1/2 -translate-x-1/2"
                         >
-                          <Image
+                          <img
                             src="/UiIcons/MoveUp.png"
                             alt="Move up"
-                            width={50}
-                            height={50}
+                            className="w-[50px] h-[50px]"
                           />
                         </button>
 
