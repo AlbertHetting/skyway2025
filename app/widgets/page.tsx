@@ -50,11 +50,11 @@ export default function Widgets() {
         </div>
 
         <div>
-          <Running />
+          <Running temperatureC={null} windSpeedMs={null} />
         </div>
 
         <div>
-          <FeelsLike />
+          <FeelsLike temperatureC={null} windSpeedMs={null} />
         </div>
       </section>
     </main>
