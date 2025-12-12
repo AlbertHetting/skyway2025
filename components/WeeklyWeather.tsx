@@ -80,7 +80,7 @@ export default function WeeklyWeather() {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="w-85 h-40 bg-white rounded-3xl mt-5 flex flex-col items-center justify-center p-4">
+    <div className="w-85 h-40 bg-white rounded-3xl mt-5 flex flex-col items-center justify-center p-4 text-[#4D4D4D]">
       <section className="grid grid-cols-3 gap-15 justify-items-center">
         {forecast.map((d) => {
           const tempDayC =

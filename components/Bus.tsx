@@ -42,7 +42,7 @@ export default function Bus() {
   if (!data || data.length === 0) return <p>No data</p>;
 
   return (
-    <div className="w-40 h-40 bg-white rounded-2xl p-2 flex justify-between">
+    <div className="w-40 h-40 bg-white rounded-2xl p-2 flex justify-between text-[#4D4D4D]">
       <main className="flex flex-col w-full h-full p-2 items-center gap-4">
         {data.map((stationData, idx) => {
           const nextTrams = stationData.nextTrams || [];
@@ -51,7 +51,7 @@ export default function Bus() {
           return (
             <section
               key={idx}
-              className="w-full flex flex-col items-center border-b border-gray-200 pb-2"
+              className="w-full flex flex-col items-center pb-2"
             >
               {/* Countdown + Clock */}
               <div className="w-full flex justify-between items-center">
