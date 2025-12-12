@@ -13,7 +13,7 @@ export default function NavDash() {
 
 
   const moveIconSrc = editMode
-    ? "/img/widget-icon.svg"
+    ? "/UiIcons/GoBack.png"
     : "/img/move-widget-icon.svg";
 
   return (
