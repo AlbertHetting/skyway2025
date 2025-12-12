@@ -13,7 +13,7 @@ export default function NavDash() {
 
 
   const moveIconSrc = editMode
-    ? "/UiIcons/StepBack2.png"
+    ? "/img/widget-icon.png"
     : "/img/move-widget-icon.svg";
 
   return (
@@ -34,7 +34,7 @@ export default function NavDash() {
     
       {/* Middle: toggle edit mode */}
       <button type="button" onClick={toggleEditMode}>
-        <img
+        <Image
           src={moveIconSrc}
           alt="Move widgets"
           width={50}
