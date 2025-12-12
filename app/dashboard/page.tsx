@@ -21,12 +21,9 @@ type WeatherResult = {
 
 type SmallWidgetId = "running" | "feelsLike" | "bus" | "letbane";
 
-const DEFAULT_SMALL_LAYOUT: SmallWidgetId[] = [
-  "running",
-  "feelsLike",
-  "bus",
-  "letbane",
-];
+const DEFAULT_LAYOUT: WidgetRowId[] = ["runningFeels", "weekly", "transport"];
+
+const LAYOUT_STORAGE_KEY = "skyway-widget-layout-v1";
 
 function getIconForCondition(
   condition?: WeatherCondition,
@@ -36,7 +33,7 @@ function getIconForCondition(
   if (!isDaytime) {
     switch (condition) {
       case "sunny":
-        return "/WeatherTransIcons/NightClear.png";
+        return "/WeatherTransIcons/NightClear.png"; // moon version
       case "partly-cloudy":
         return "/WeatherTransIcons/CloudyNight.png";
       case "cloudy":
@@ -114,9 +111,8 @@ export default function Dashboard() {
 
   const { editMode } = useEditMode();
 
-  const [smallLayout, setSmallLayout] = useState<SmallWidgetId[]>(
-    DEFAULT_SMALL_LAYOUT
-  );
+  const { editMode } = useEditMode(); // 👈 get editMode from context
+  const [layout, setLayout] = useState<WidgetRowId[]>(DEFAULT_LAYOUT);
 
   // ---- movement helpers for small widgets (inside component!) ----
   const swapSmallWidgets = (fromIndex: number, toIndex: number) => {
@@ -143,20 +139,6 @@ export default function Dashboard() {
   const moveSmallDown = (index: number) => {
     // one row down => index + 2
     swapSmallWidgets(index, index + 2);
-  };
-
-  const moveSmallLeft = (index: number) => {
-    // left only if in right column (odd index)
-    if (index % 2 === 1) {
-      swapSmallWidgets(index, index - 1);
-    }
-  };
-
-  const moveSmallRight = (index: number) => {
-    // right only if in left column (even index)
-    if (index % 2 === 0 && index + 1 < smallLayout.length) {
-      swapSmallWidgets(index, index + 1);
-    }
   };
 
   // 1) Get user location (client-side)
@@ -276,7 +258,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* HOURLY STRIP (static) */}
         <div className="mt-[-50] flex justify-center">
           <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
             <div className="flex flex-row">
@@ -290,10 +271,14 @@ export default function Dashboard() {
                       hour: "2-digit",
                     });
 
+                // compute day/night for THIS forecast hour
                 const entryHour = date.getHours();
                 const entryIsDay = entryHour >= 7 && entryHour < 18;
 
-                const iconSrc = getIconForCondition(entry.condition, entryIsDay);
+                const iconSrc = getIconForCondition(
+                  entry.condition,
+                  entryIsDay
+                );
                 const tempWhole = Math.round(entry.temperatureC);
 
                 return (
@@ -323,122 +308,82 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* SMALL WIDGET GRID (movable with arrows) */}
-        <div className="mt-5 flex justify-center">
-          <div className="grid grid-cols-2 gap-5">
-            {smallLayout.map((id, index) => {
-              let content: JSX.Element | null = null;
+        <div className="mt-5 flex flex-col gap-5 drop-shadow-xl">
+          {layout.map((rowId, index) => {
+            const canMoveUp = index > 0;
+            const canMoveDown = index < layout.length - 1;
 
-              switch (id) {
-                case "running":
-                  content = (
+            const Arrows = () =>
+              editMode ? (
+                <div className="absolute -top-3 left-1/2 flex -translate-x-1/2 gap-2 text-xs">
+                  <button
+                    disabled={!canMoveUp}
+                    onClick={() => moveRowUp(index)}
+                    className={canMoveUp ? "opacity-100" : "opacity-30"}
+                  >
+                    ▲
+                  </button>
+                  <button
+                    disabled={!canMoveDown}
+                    onClick={() => moveRowDown(index)}
+                    className={canMoveDown ? "opacity-100" : "opacity-30"}
+                  >
+                    ▼
+                  </button>
+                </div>
+              ) : null;
+
+            switch (rowId) {
+              case "runningFeels":
+                return (
+                  <div
+                    key={rowId + index}
+                    className="relative flex flex-row justify-center gap-5"
+                  >
+                    <Arrows />
                     <Running
                       temperatureC={weather?.temperatureC ?? null}
                       condition={weather?.condition}
                       windSpeedMs={weather?.windspeedMs ?? null}
                     />
-                  );
-                  break;
-
-                case "feelsLike":
-                  content = (
                     <FeelsLike
                       temperatureC={weather?.temperatureC ?? null}
                       condition={weather?.condition}
                       windSpeedMs={weather?.windspeedMs ?? null}
                     />
-                  );
-                  break;
+                  </div>
+                );
 
-                case "bus":
-                  content = <Bus />;
-                  break;
+              case "weekly":
+                return (
+                  <div
+                    key={rowId + index}
+                    className="relative flex flex-col justify-center items-center"
+                  >
+                    <Arrows />
+                    <WeeklyWeather />
+                  </div>
+                );
 
-                case "letbane":
-                  content = <Letbane />;
-                  break;
-              }
+              case "transport":
+                return (
+                  <div
+                    key={rowId + index}
+                    className="relative flex flex-row justify-center gap-5"
+                  >
+                    <Arrows />
+                    {/* put your transport widget(s) here */}
+                    <Bus />
+                    <Letbane />
+                  </div>
+                );
 
-              return (
-                <div
-                  key={id}
-                  className="relative w-40 h-40 bg-white rounded-3xl drop-shadow-xl flex items-center justify-center"
-                >
-                  {content}
-
-                  {editMode && (
-                    <>
-                      {/* UP */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallUp(index)}
-                        className="absolute top-1 left-1/2 -translate-x-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveUp.png"
-                          alt="Move up"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
-
-                      {/* DOWN */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallDown(index)}
-                        className="absolute bottom-1 left-1/2 -translate-x-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveDown.png"
-                          alt="Move down"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
-
-                      {/* LEFT */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallLeft(index)}
-                        className="absolute top-1/2 left-1 -translate-y-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveLeft.png"
-                          alt="Move left"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
-
-                      {/* RIGHT */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallRight(index)}
-                        className="absolute top-1/2 right-1 -translate-y-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveRight.png"
-                          alt="Move right"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* WEEKLY WIDGET (static below grid) */}
-        <div className="flex flex-row justify-center drop-shadow-xl mt-5">
-          <div className="w-85 h-40 bg-white rounded-3xl">
-            <WeeklyWeather />
-          </div>
+              default:
+                return null;
+            }
+          })}
         </div>
       </main>
     </div>
   );
 }
-
