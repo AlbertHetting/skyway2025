@@ -13,13 +13,13 @@ import { useEditMode } from "@/app/EditModeContext";
 type WeatherResult = {
   temperatureC: number;
   time: string | null;
-  hourly: HourlyForecast[]; // 👈 add this
+  hourly: HourlyForecast[];
   cloudFrac: number | null;
   condition: WeatherCondition;
   windspeedMs: number | null;
 };
 
-type WidgetRowId = "runningFeels" | "weekly" | "transport";
+type SmallWidgetId = "running" | "feelsLike" | "bus" | "letbane";
 
 const DEFAULT_LAYOUT: WidgetRowId[] = ["runningFeels", "weekly", "transport"];
 
@@ -52,7 +52,7 @@ function getIconForCondition(
     }
   }
 
-  // Day icons (your current mapping)
+  // Day icons
   switch (condition) {
     case "sunny":
       return "/WeatherTransIcons/Sunny.png";
@@ -109,30 +109,37 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ...existing state: coords, weather, loading, error...
+  const { editMode } = useEditMode();
 
   const { editMode } = useEditMode(); // 👈 get editMode from context
   const [layout, setLayout] = useState<WidgetRowId[]>(DEFAULT_LAYOUT);
 
-  const moveRowUp = (index: number) => {
-    if (index === 0) return;
-    setLayout((prev) => {
+  // ---- movement helpers for small widgets (inside component!) ----
+  const swapSmallWidgets = (fromIndex: number, toIndex: number) => {
+    setSmallLayout((prev) => {
+      if (
+        toIndex < 0 ||
+        toIndex >= prev.length ||
+        fromIndex < 0 ||
+        fromIndex >= prev.length
+      ) {
+        return prev;
+      }
       const next = [...prev];
-      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
       return next;
     });
   };
 
-  const moveRowDown = (index: number) => {
-    setLayout((prev) => {
-      if (index >= prev.length - 1) return prev;
-      const next = [...prev];
-      [next[index + 1], next[index]] = [next[index], next[index + 1]];
-      return next;
-    });
+  const moveSmallUp = (index: number) => {
+    // one row up in 2-column grid => index - 2
+    swapSmallWidgets(index, index - 2);
   };
 
-  // ...your existing now/hour/isDaytime/displayDate/etc...
+  const moveSmallDown = (index: number) => {
+    // one row down => index + 2
+    swapSmallWidgets(index, index + 2);
+  };
 
   // 1) Get user location (client-side)
   useEffect(() => {
@@ -219,7 +226,6 @@ export default function Dashboard() {
         </div>
 
         <div className="text-black flex flex-col justify-center text-center mt-3">
-          {/* You don't have a city name from geolocation, so show "Din lokation" */}
           <h1 className="text-xl">Din lokation</h1>
 
           {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
@@ -247,7 +253,7 @@ export default function Dashboard() {
             src={mainIconSrc}
             alt={mainIconAlt}
             width={285}
-            height={285} // or whatever size you actually want
+            height={285}
             priority
           />
         </div>
