@@ -256,7 +256,7 @@ export default function Dashboard() {
               className="absolute top-1 left-1/2 -translate-x-1/2"
             >
               <Image
-                src="/UiIcons/MoveDown.png"
+                src="/UiIcons/MoveUUp.png"
                 alt="Move up"
                 width={50}
                 height={50}
@@ -439,7 +439,7 @@ export default function Dashboard() {
                           className="absolute top-1 left-1/2 -translate-x-1/2"
                         >
                         <Image
-                          src="/UiIcons/MoveDown.png"
+                          src="/UiIcons/MoveUUp.png"
                           alt="Move up"
                           width={50}
                           height={50}
@@ -551,7 +551,7 @@ export default function Dashboard() {
                           className="absolute top-1 left-1/2 -translate-x-1/2"
                         >
                           <Image
-                            src="/UiIcons/MoveDown.png"
+                            src="/UiIcons/MoveUUp.png"
                             alt="Move up"
                             width={50}
                             height={50}
