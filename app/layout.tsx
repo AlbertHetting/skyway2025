@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative overflow-hidden bg-gray-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative bg-gray-100 scroll-hidden background-white`}
       >
         <EditModeProvider>
         {/* Main content scrollable */}
