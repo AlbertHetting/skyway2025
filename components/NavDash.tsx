@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEditMode } from "@/app/EditModeContext"; // path from NavDash to that file
+import Link from "next/link";
 
 type NavDashProps = {
   editMode: boolean;
@@ -10,9 +11,15 @@ type NavDashProps = {
 export default function NavDash() {
   const { editMode, toggleEditMode } = useEditMode();
 
+
+  const moveIconSrc = editMode
+    ? "/UiIcons/StepBack2.png"
+    : "/img/move-widget-icon.svg";
+
   return (
     <nav className="flex flex-row w-100 justify-between px-5">
       {/* Left button – you can still turn this into a Link later if you want */}
+      <Link href="/widgets">
       <button type="button">
         <Image
           src="/img/widgets-icon.svg"
@@ -22,11 +29,13 @@ export default function NavDash() {
           className="drop-shadow-lg"
         />
       </button>
+      </Link>
 
+    
       {/* Middle: toggle edit mode */}
       <button type="button" onClick={toggleEditMode}>
         <Image
-          src="/img/move-widget-icon.svg"
+          src={moveIconSrc}
           alt="Move widgets"
           width={50}
           height={50}
@@ -35,7 +44,7 @@ export default function NavDash() {
           }`}
         />
       </button>
-
+      <Link href="/menu">
       {/* Right button – menu */}
       <button type="button">
         <Image
@@ -46,6 +55,7 @@ export default function NavDash() {
           className="drop-shadow-lg"
         />
       </button>
+      </Link>
     </nav>
   );
 }

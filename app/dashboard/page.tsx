@@ -19,6 +19,7 @@ type WeatherResult = {
   windspeedMs: number | null;
 };
 
+// Small widget types (2-column grid items)
 type SmallWidgetId = "running" | "feelsLike" | "bus" | "letbane";
 
 const DEFAULT_SMALL_LAYOUT: SmallWidgetId[] = [
@@ -114,11 +115,15 @@ export default function Dashboard() {
 
   const { editMode } = useEditMode();
 
+  // 4 small widgets in 2×2 grid
   const [smallLayout, setSmallLayout] = useState<SmallWidgetId[]>(
     DEFAULT_SMALL_LAYOUT
   );
 
-  // ---- movement helpers for small widgets (inside component!) ----
+  // Weekly position: 0 = above grid, 1 = between rows, 2 = below grid
+  const [weeklyPosition, setWeeklyPosition] = useState<0 | 1 | 2>(2);
+
+  // ---- small widget movement ----
   const swapSmallWidgets = (fromIndex: number, toIndex: number) => {
     setSmallLayout((prev) => {
       if (
@@ -159,6 +164,15 @@ export default function Dashboard() {
     }
   };
 
+  // ---- weekly movement (0 ⇄ 1 ⇄ 2) ----
+  const moveWeeklyUp = () => {
+    setWeeklyPosition((p) => (p > 0 ? (p - 1) as 0 | 1 | 2 : p));
+  };
+
+  const moveWeeklyDown = () => {
+    setWeeklyPosition((p) => (p < 2 ? (p + 1) as 0 | 1 | 2 : p));
+  };
+
   // 1) Get user location (client-side)
   useEffect(() => {
     if (!("geolocation" in navigator)) {
@@ -179,7 +193,7 @@ export default function Dashboard() {
     );
   }, []);
 
-  // 2) Fetch weather for that location from our API route
+  // 2) Fetch weather
   useEffect(() => {
     if (!coords) return;
 
@@ -209,7 +223,7 @@ export default function Dashboard() {
     fetchWeather();
   }, [coords]);
 
-  // 3) Format temperature and date for display
+  // 3) Time formatting
   const now = new Date();
   const hour = now.getHours();
   const isDaytime = hour >= 7 && hour < 18;
@@ -227,12 +241,54 @@ export default function Dashboard() {
   const mainIconAlt = weather?.condition ?? "Weather icon";
   const bgGradient = getBackgroundGradient(weather?.condition);
 
+  // helper to render WeeklyWeather with same arrow style as small widgets
+  const WeeklyCard = () => (
+    <div className="flex flex-row justify-center w-full drop-shadow-xl">
+      <div className="relative w-85 h-40 bg-white rounded-3xl mb-5">
+        <WeeklyWeather />
+
+        {editMode && (
+          <>
+            {/* UP */}
+            <button
+              type="button"
+              onClick={moveWeeklyUp}
+              className="absolute top-1 left-1/2 -translate-x-1/2"
+            >
+              <Image
+                src="/UiIcons/MoveUp.png"
+                alt="Move up"
+                width={50}
+                height={50}
+              />
+            </button>
+
+            {/* DOWN */}
+            <button
+              type="button"
+              onClick={moveWeeklyDown}
+              className="absolute bottom-1 left-1/2 -translate-x-1/2"
+            >
+              <Image
+                src="/UiIcons/MoveDown.png"
+                alt="Move down"
+                width={50}
+                height={50}
+              />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div
-      className="flex min-h-screen justify-center bg-zinc-50 font-sans"
+      className="w-full font-sans"
       style={{ backgroundImage: bgGradient }}
     >
-      <main>
+      <main className="pb-10">
+        {/* Logo */}
         <div className="w-full flex items-center justify-center pt-5">
           <Image
             src="/img/skyway-logo-with-text.svg"
@@ -243,6 +299,7 @@ export default function Dashboard() {
           />
         </div>
 
+        {/* Location + temp */}
         <div className="text-black flex flex-col justify-center text-center mt-3">
           <h1 className="text-xl">Din lokation</h1>
 
@@ -265,6 +322,7 @@ export default function Dashboard() {
           <h3>{displayDate}</h3>
         </div>
 
+        {/* Main icon */}
         <div className="flex flex-row justify-center">
           <Image
             className="mt-[-40]"
@@ -276,7 +334,7 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* HOURLY STRIP (static) */}
+        {/* Hourly strip (static) */}
         <div className="mt-[-50] flex justify-center">
           <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
             <div className="flex flex-row">
@@ -323,121 +381,237 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* SMALL WIDGET GRID (movable with arrows) */}
-        <div className="mt-5 flex justify-center">
-          <div className="grid grid-cols-2 gap-5">
-            {smallLayout.map((id, index) => {
-              let content: JSX.Element | null = null;
+        {/* Widgets section: weekly can be top / middle / bottom */}
+        <div className="mt-5 flex flex-col gap-5 items-center">
+          {/* Weekly at TOP */}
+          {weeklyPosition === 0 && <WeeklyCard />}
 
-              switch (id) {
-                case "running":
-                  content = (
-                    <Running
-                      temperatureC={weather?.temperatureC ?? null}
-                      condition={weather?.condition}
-                      windSpeedMs={weather?.windspeedMs ?? null}
-                    />
-                  );
-                  break;
+          {/* TOP ROW of small widgets: indices 0 & 1 */}
+          <div className="flex justify-center w-full">
+            <div className="grid grid-cols-2 gap-5">
+              {smallLayout.slice(0, 2).map((id, localIndex) => {
+                const index = localIndex; // 0 or 1
+                let content = null;
 
-                case "feelsLike":
-                  content = (
-                    <FeelsLike
-                      temperatureC={weather?.temperatureC ?? null}
-                      condition={weather?.condition}
-                      windSpeedMs={weather?.windspeedMs ?? null}
-                    />
-                  );
-                  break;
+                switch (id) {
+                  case "running":
+                    content = (
+                      <Running
+                        temperatureC={weather?.temperatureC ?? null}
+                        condition={weather?.condition}
+                        windSpeedMs={weather?.windspeedMs ?? null}
+                      />
+                    );
+                    break;
 
-                case "bus":
-                  content = <Bus />;
-                  break;
+                  case "feelsLike":
+                    content = (
+                      <FeelsLike
+                        temperatureC={weather?.temperatureC ?? null}
+                        condition={weather?.condition}
+                        windSpeedMs={weather?.windspeedMs ?? null}
+                      />
+                    );
+                    break;
 
-                case "letbane":
-                  content = <Letbane />;
-                  break;
-              }
+                  case "bus":
+                    content = <Bus />;
+                    break;
 
-              return (
-                <div
-                  key={id}
-                  className="relative w-40 h-40 bg-white rounded-3xl drop-shadow-xl flex items-center justify-center"
-                >
-                  {content}
+                  case "letbane":
+                    content = <Letbane />;
+                    break;
+                }
 
-                  {editMode && (
-                    <>
-                      {/* UP */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallUp(index)}
-                        className="absolute top-1 left-1/2 -translate-x-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveUp.png"
-                          alt="Move up"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
+                return (
+                  <div
+                    key={id}
+                    className="relative w-40 h-40 bg-white rounded-3xl drop-shadow-xl flex items-center justify-center"
+                  >
+                    {content}
 
-                      {/* DOWN */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallDown(index)}
-                        className="absolute bottom-1 left-1/2 -translate-x-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveDown.png"
-                          alt="Move down"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
+                    {editMode && (
+                      <>
+                        {/* UP */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallUp(index)}
+                          className="absolute top-1 left-1/2 -translate-x-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveUp.png"
+                            alt="Move up"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
 
-                      {/* LEFT */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallLeft(index)}
-                        className="absolute top-1/2 left-1 -translate-y-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveLeft.png"
-                          alt="Move left"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
+                        {/* DOWN */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallDown(index)}
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveDown.png"
+                            alt="Move down"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
 
-                      {/* RIGHT */}
-                      <button
-                        type="button"
-                        onClick={() => moveSmallRight(index)}
-                        className="absolute top-1/2 right-1 -translate-y-1/2"
-                      >
-                        <Image
-                          src="/UiIcons/MoveRight.png"
-                          alt="Move right"
-                          width={50}
-                          height={50}
-                        />
-                      </button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+                        {/* LEFT */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallLeft(index)}
+                          className="absolute top-1/2 left-1 -translate-y-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveLeft.png"
+                            alt="Move left"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
+
+                        {/* RIGHT */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallRight(index)}
+                          className="absolute top-1/2 right-1 -translate-y-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveRight.png"
+                            alt="Move right"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* WEEKLY WIDGET (static below grid) */}
-        <div className="flex flex-row justify-center drop-shadow-xl mt-5">
-          <div className="w-85 h-40 bg-white rounded-3xl">
-            <WeeklyWeather />
+          {/* Weekly in the MIDDLE */}
+          {weeklyPosition === 1 && <WeeklyCard />}
+
+          {/* BOTTOM ROW of small widgets: indices 2 & 3 */}
+          <div className="flex justify-center w-full">
+            <div className="grid grid-cols-2 gap-5">
+              {smallLayout.slice(2).map((id, localIndex) => {
+                const index = localIndex + 2; // 2 or 3
+                let content = null;
+
+                switch (id) {
+                  case "running":
+                    content = (
+                      <Running
+                        temperatureC={weather?.temperatureC ?? null}
+                        condition={weather?.condition}
+                        windSpeedMs={weather?.windspeedMs ?? null}
+                      />
+                    );
+                    break;
+
+                  case "feelsLike":
+                    content = (
+                      <FeelsLike
+                        temperatureC={weather?.temperatureC ?? null}
+                        condition={weather?.condition}
+                        windSpeedMs={weather?.windspeedMs ?? null}
+                      />
+                    );
+                    break;
+
+                  case "bus":
+                    content = <Bus />;
+                    break;
+
+                  case "letbane":
+                    content = <Letbane />;
+                    break;
+                }
+
+                return (
+                  <div
+                    key={id}
+                    className="relative w-40 h-40 bg-white rounded-3xl drop-shadow-xl flex items-center justify-center"
+                  >
+                    {content}
+
+                    {editMode && (
+                      <>
+                        {/* UP */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallUp(index)}
+                          className="absolute top-1 left-1/2 -translate-x-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveUp.png"
+                            alt="Move up"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
+
+                        {/* DOWN */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallDown(index)}
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveDown.png"
+                            alt="Move down"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
+
+                        {/* LEFT */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallLeft(index)}
+                          className="absolute top-1/2 left-1 -translate-y-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveLeft.png"
+                            alt="Move left"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
+
+                        {/* RIGHT */}
+                        <button
+                          type="button"
+                          onClick={() => moveSmallRight(index)}
+                          className="absolute top-1/2 right-1 -translate-y-1/2"
+                        >
+                          <Image
+                            src="/UiIcons/MoveRight.png"
+                            alt="Move right"
+                            width={50}
+                            height={50}
+                          />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Weekly at BOTTOM */}
+          {weeklyPosition === 2 && <WeeklyCard />}
         </div>
       </main>
     </div>
   );
 }
+
