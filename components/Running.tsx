@@ -114,7 +114,7 @@ export default function Running({
     <main>
       <div className="w-40 h-40 bg-white rounded-3xl">
         {/* Header: Running + dynamic condition label */}
-        <div className="flex flex-row justify-center items-center gap-4 text-[#4D4D4D]">
+        <div className="flex flex-row justify-center items-center gap-12 text-[#4D4D4D]">
           <h1 className="mt-2 ml-1 text-md font-bold">Løb</h1>
           <h1 className="mt-2 text-xs">
             {runningLabel}
