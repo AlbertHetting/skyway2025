@@ -34,7 +34,7 @@ export default function NavDash() {
     
       {/* Middle: toggle edit mode */}
       <button type="button" onClick={toggleEditMode}>
-        <Image
+        <img
           src={moveIconSrc}
           alt="Move widgets"
           width={50}
