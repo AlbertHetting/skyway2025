@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Onboarding() {
   return (
-    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans bg-[linear-gradient(to_bottom,_white_0%,_#FFE8C8_25%,_#FFE8C8_75%,_white_100%)]">
+    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans bg-[linear-gradient(to_bottom,white_0%,#FFE8C8_25%,#FFE8C8_75%,white_100%)]">
       <main className="drop-shadow-xl">
         {/* Logo */}
         <div className="flex flex-col items-center">
