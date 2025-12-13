@@ -20,7 +20,7 @@ export default function SplashPage() {
       <div className="w-1/2 flex relative mt-60">
         <Image
           src="/img/skyway-logo-with-text.svg"
-          alt="Skyway logo"
+          alt="Skyway splashscreen"
           width={400}
           height={100}
         />
