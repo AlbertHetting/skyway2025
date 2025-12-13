@@ -9,7 +9,7 @@ export default function SplashPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/dashboard");
+      router.push("/onboarding");
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -27,7 +27,7 @@ export default function SplashPage() {
       </div>
 
       <div className="">
-        <p className="font-bold">®SkyWay 2025</p>
+        <p className="text-black font-bold">®SkyWay 2025</p>
       </div>
     </main>
   );
