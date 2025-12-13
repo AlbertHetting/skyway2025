@@ -9,7 +9,7 @@ export default function SplashPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/dashboard");
+      router.push("/onboarding");
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -20,14 +20,14 @@ export default function SplashPage() {
       <div className="w-1/2 flex relative mt-60">
         <Image
           src="/img/skyway-logo-with-text.svg"
-          alt="Skyway logo"
+          alt="Skyway splashscreen"
           width={400}
           height={100}
         />
       </div>
 
       <div className="">
-        <p className="font-bold">®SkyWay 2025</p>
+        <p className="text-black font-bold">®SkyWay 2025</p>
       </div>
     </main>
   );

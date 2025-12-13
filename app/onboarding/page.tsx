@@ -19,7 +19,7 @@ export default function Onboarding() {
         </div>
 
         {/* Instruction Blocks */}
-        <div className="flex flex-col mt-20 gap-5">
+        <div className="flex flex-col mt-10">
           {/* Menu Instruction */}
           <div
             role="region" // ♿ accessibility
