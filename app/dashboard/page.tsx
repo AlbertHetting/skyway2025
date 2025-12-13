@@ -116,9 +116,8 @@ export default function Dashboard() {
   const { editMode } = useEditMode();
 
   // 4 small widgets in 2×2 grid
-  const [smallLayout, setSmallLayout] = useState<SmallWidgetId[]>(
-    DEFAULT_SMALL_LAYOUT
-  );
+  const [smallLayout, setSmallLayout] =
+    useState<SmallWidgetId[]>(DEFAULT_SMALL_LAYOUT);
 
   // Weekly position: 0 = above grid, 1 = between rows, 2 = below grid
   const [weeklyPosition, setWeeklyPosition] = useState<0 | 1 | 2>(2);
@@ -166,11 +165,11 @@ export default function Dashboard() {
 
   // ---- weekly movement (0 ⇄ 1 ⇄ 2) ----
   const moveWeeklyUp = () => {
-    setWeeklyPosition((p) => (p > 0 ? (p - 1) as 0 | 1 | 2 : p));
+    setWeeklyPosition((p) => (p > 0 ? ((p - 1) as 0 | 1 | 2) : p));
   };
 
   const moveWeeklyDown = () => {
-    setWeeklyPosition((p) => (p < 2 ? (p + 1) as 0 | 1 | 2 : p));
+    setWeeklyPosition((p) => (p < 2 ? ((p + 1) as 0 | 1 | 2) : p));
   };
 
   // 1) Get user location (client-side)
@@ -253,7 +252,7 @@ export default function Dashboard() {
             <button
               type="button"
               onClick={moveWeeklyUp}
-              className="absolute top-1 left-1/2 -translate-x-1/2"
+              className="absolute top-1 left-1/2 -translate-x-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
             >
               <Image
                 src="/UiIcons/MoveUUp.png"
@@ -267,7 +266,7 @@ export default function Dashboard() {
             <button
               type="button"
               onClick={moveWeeklyDown}
-              className="absolute bottom-1 left-1/2 -translate-x-1/2"
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
             >
               <Image
                 src="/UiIcons/MoveDown.png"
@@ -283,30 +282,42 @@ export default function Dashboard() {
   );
 
   return (
-    <div
-      className="w-full font-sans"
-      style={{ backgroundImage: bgGradient }}
-    >
-      <main className="pb-10">
+    <div className="w-full font-sans" style={{ backgroundImage: bgGradient }}>
+      <main id="main" aria-labelledby="dashboard-title" className="pb-10">
         {/* Logo */}
         <div className="w-full flex items-center justify-center pt-5">
           <Image
             src="/img/skyway-logo-with-text.svg"
-            alt="Skyway logo"
+            alt="Skyway dashboard"
             width={200}
             height={100}
             className="size-20"
           />
         </div>
 
-        {/* Location + temp */}
-        <div className="text-black flex flex-col justify-center text-center mt-3">
-          <h1 className="text-xl">Din lokation</h1>
+        <p className="sr-only">
+          Aktuelt vejr: {weather?.condition ?? "ukendt"}
+        </p>
 
-          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+        {/* Location + temp */}
+        <div
+          aria-live="polite"
+          className="text-black flex flex-col justify-center text-center mt-3"
+        >
+          <h1 id="dashboard-title" className="text-xl">
+            Din lokation
+          </h1>
+
+          {error && (
+            <p role="alert" className="text-sm text-red-500 mt-1">
+              {error}
+            </p>
+          )}
 
           {loading && !weather && !error && (
-            <p className="text-sm text-zinc-700 mt-1">Henter vejrdata...</p>
+            <p aria-live="polite" className="text-sm text-zinc-700 mt-1">
+              Henter vejrdata...
+            </p>
           )}
 
           <h2 className="font-bold text-4xl mt-1">
@@ -336,7 +347,11 @@ export default function Dashboard() {
 
         {/* Hourly strip (static) */}
         <div className="mt-[-50] flex justify-center">
-          <div className="w-full max-w-[380px] overflow-x-auto scroll-hide">
+          <div
+            role="region"
+            aria-label="Time for time vejrudsigt"
+            className="w-full max-w-[380px] overflow-x-auto scroll-hide"
+          >
             <div className="flex flex-row">
               {weather?.hourly?.map((entry, index) => {
                 const date = new Date(entry.time);
@@ -351,7 +366,10 @@ export default function Dashboard() {
                 const entryHour = date.getHours();
                 const entryIsDay = entryHour >= 7 && entryHour < 18;
 
-                const iconSrc = getIconForCondition(entry.condition, entryIsDay);
+                const iconSrc = getIconForCondition(
+                  entry.condition,
+                  entryIsDay
+                );
                 const tempWhole = Math.round(entry.temperatureC);
 
                 return (
@@ -359,12 +377,17 @@ export default function Dashboard() {
                     key={entry.time}
                     className="flex flex-col items-center justify-center text-center min-w-[60px] shrink-0"
                   >
-                    <h1 className="text-black font-bold">{label}</h1>
+                    <h1
+                      aria-label={`Tidspunkt ${label}`}
+                      className="text-black font-bold"
+                    >
+                      {label}
+                    </h1>
 
                     <Image
                       className="mt-[-10]"
                       src={iconSrc}
-                      alt={entry.condition}
+                      alt={`Vejr klokken ${label}: ${entry.condition}`}
                       width={50}
                       height={50}
                       priority={index === 0}
@@ -436,21 +459,21 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => moveSmallUp(index)}
-                          className="absolute top-1 left-1/2 -translate-x-1/2"
+                          className="absolute top-1 left-1/2 -translate-x-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
-                        <Image
-                          src="/UiIcons/MoveUUp.png"
-                          alt="Move up"
-                          width={50}
-                          height={50}
-                        />
+                          <Image
+                            src="/UiIcons/MoveUUp.png"
+                            alt="Move up"
+                            width={50}
+                            height={50}
+                          />
                         </button>
 
                         {/* DOWN */}
                         <button
                           type="button"
                           onClick={() => moveSmallDown(index)}
-                          className="absolute bottom-1 left-1/2 -translate-x-1/2"
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveDown.png"
@@ -464,7 +487,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => moveSmallLeft(index)}
-                          className="absolute top-1/2 left-1 -translate-y-1/2"
+                          className="absolute top-1/2 left-1 -translate-y-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveLeft.png"
@@ -478,7 +501,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => moveSmallRight(index)}
-                          className="absolute top-1/2 right-1 -translate-y-1/2"
+                          className="absolute top-1/2 right-1 -translate-y-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveRight.png"
@@ -547,8 +570,9 @@ export default function Dashboard() {
                         {/* UP */}
                         <button
                           type="button"
+                          aria-label="Flyt widget op"
                           onClick={() => moveSmallUp(index)}
-                          className="absolute top-1 left-1/2 -translate-x-1/2"
+                          className="absolute top-1 left-1/2 -translate-x-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveUUp.png"
@@ -561,8 +585,9 @@ export default function Dashboard() {
                         {/* DOWN */}
                         <button
                           type="button"
+                          aria-label="Flyt widget ned"
                           onClick={() => moveSmallDown(index)}
-                          className="absolute bottom-1 left-1/2 -translate-x-1/2"
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveDown.png"
@@ -575,8 +600,9 @@ export default function Dashboard() {
                         {/* LEFT */}
                         <button
                           type="button"
+                          aria-label="Flyt widget til venstre"
                           onClick={() => moveSmallLeft(index)}
-                          className="absolute top-1/2 left-1 -translate-y-1/2"
+                          className="absolute top-1/2 left-1 -translate-y-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveLeft.png"
@@ -589,8 +615,9 @@ export default function Dashboard() {
                         {/* RIGHT */}
                         <button
                           type="button"
+                          aria-label="Flyt widget til højre"
                           onClick={() => moveSmallRight(index)}
-                          className="absolute top-1/2 right-1 -translate-y-1/2"
+                          className="absolute top-1/2 right-1 -translate-y-1/2 focus-visible:outline-4 focus-visible:outline-blue-500"
                         >
                           <Image
                             src="/UiIcons/MoveRight.png"
@@ -614,4 +641,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

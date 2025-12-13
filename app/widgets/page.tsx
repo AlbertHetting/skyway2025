@@ -9,7 +9,10 @@ import FeelsLike from "@/components/Feelslike";
 
 export default function Widgets() {
   return (
-    <main className="w-full min-h-screen bg-fixed bg-cover bg-center bg-[url('/img/bg-widgets-cloudy.svg')] flex flex-col items-center p-5">
+    <main
+      className="w-full min-h-screen bg-fixed bg-cover bg-center bg-[url('/img/bg-widgets-cloudy.svg')] flex flex-col items-center p-5"
+      aria-labelledby="widgets-title"
+    >
       {/* Header */}
       <section className="flex flex-col items-center">
         <div className="flex items-center justify-center mb-5">
@@ -22,54 +25,50 @@ export default function Widgets() {
           />
         </div>
 
-        <div className="w-[80vw] text-center text-black text-sm italic mb-10">
-          Vælg de widgets du gerne <br /> vil have vist på dashboardet <br />
-          Hjertet placerer widget'en øverst
-        </div>
+        <h1
+          id="widgets-title"
+          className="w-[80vw] text-center text-black text-sm italic mb-10"
+        >
+          Vælg de widgets du gerne vil have vist på dashboardet. Hjertet
+          placerer widget'en øverst.
+        </h1>
       </section>
 
       {/* Widget Grid */}
-      <section className="grid grid-cols-2 gap-5 justify-items-center w-85 max-w-4xl ">
-        {/* Overlay icons */}
-
-        {/* Letbane content */}
-        <div>
+      <section
+        className="grid grid-cols-2 gap-5 justify-items-center w-85 max-w-4xl"
+        role="region"
+        aria-label="Widgets til dashboard"
+      >
+        {/* Bus */}
+        <div role="region" aria-label="Bus-widget">
           <Bus />
         </div>
 
-        <div>
-          {/* Letbane content */}
-          <div>
-            <Letbane />
-          </div>
+        {/* Letbane */}
+        <div role="region" aria-label="Letbane-widget">
+          <Letbane />
         </div>
 
-        {/* WeeklyWeather underneath */}
-        <div className="col-span-2">
+        {/* WeeklyWeather */}
+        <div
+          className="col-span-2"
+          role="region"
+          aria-label="Ugentlig vejrudsigt"
+        >
           <WeeklyWeather />
         </div>
 
-        <div>
+        {/* Running */}
+        <div role="region" aria-label="Løbe-widget">
           <Running temperatureC={null} windSpeedMs={null} />
         </div>
 
-        <div>
+        {/* FeelsLike */}
+        <div role="region" aria-label="Føles-som-temperatur-widget">
           <FeelsLike temperatureC={null} windSpeedMs={null} />
         </div>
       </section>
     </main>
   );
-}
-
-{
-  /*Gammel widget struktur */
-}
-{
-  /* <div className="w-full h-36 bg-white rounded-2xl p-2 flex justify-between">
-  <div className="flex items-start justify-between w-full z-10">
-    <Image src="/img/add-icon.svg" alt="add" width={40} height={40} />
-    <Image src="/img/heart-icon.svg" alt="heart" width={40} height={40} />
-  </div>
-</div>;
- */
 }

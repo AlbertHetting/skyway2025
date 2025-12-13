@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar";
 import { EditModeProvider } from "./EditModeContext";
 import NavDash from "@/components/NavDash"; // adjust path if needed
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,20 +24,20 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="da">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative bg-gray-100 scroll-hidden background-white`}
       >
         <EditModeProvider>
-        {/* Main content scrollable */}
-        <main className="min-h-screen w-full overflow-auto pb-24">
-          {children}
-        </main>
+          {/* Main content scrollable */}
+          <main className="min-h-screen w-full overflow-auto pb-24">
+            {children}
+          </main>
 
-        {/* Navbar fixed at bottom */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 ">
-          <Navbar />
-        </footer>
+          {/* Navbar fixed at bottom */}
+          <footer className="fixed bottom-0 left-0 w-full z-50 flex justify-center py-4 ">
+            <Navbar />
+          </footer>
         </EditModeProvider>
       </body>
     </html>

@@ -30,7 +30,7 @@ export default function WeeklyWeather() {
   // Automatically request location on mount
   useEffect(() => {
     if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported in this browser.");
+      setGeoError("Geolocation er ikke understøttet i denne browser.");
       setGeoLoading(false);
       return;
     }
@@ -41,7 +41,7 @@ export default function WeeklyWeather() {
         setGeoLoading(false);
       },
       (err) => {
-        setGeoError(err.message || "Failed to get location.");
+        setGeoError(err.message || "Fejl ved hentning af lokation.");
         setGeoLoading(false);
       }
     );
@@ -65,7 +65,7 @@ export default function WeeklyWeather() {
         const days = aggregateToDays(json);
         setForecast(days);
       } catch (err: any) {
-        setError(err.message || "Failed to load weather");
+        setError(err.message || "Kunne ikke hente vejret");
       } finally {
         setLoading(false);
       }
@@ -75,12 +75,16 @@ export default function WeeklyWeather() {
   }, [coords]);
 
   // --- UI ---
-  if (geoLoading || loading) return <p>Loading weekly weather…</p>;
+  if (geoLoading || loading) return <p>Indlæser ugevær…</p>;
   if (geoError) return <p className="text-red-500">{geoError}</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="w-85 h-40 bg-white rounded-3xl mt-5 flex flex-col items-center justify-center p-4 text-[#4D4D4D]">
+    <div
+      className="w-85 h-40 bg-white rounded-3xl mt-5 flex flex-col items-center justify-center p-4 text-[#4D4D4D]"
+      role="region"
+      aria-label="Ugevejr: daglige temperaturer og ikoner"
+    >
       <section className="grid grid-cols-3 gap-15 justify-items-center">
         {forecast.map((d) => {
           const tempDayC =
@@ -93,7 +97,12 @@ export default function WeeklyWeather() {
           return (
             <div key={d.date}>
               <div className="flex flex-col items-center text-center">
-                <Image src={icon} alt="Weather icon" width={40} height={40} />
+                <Image
+                  src={icon}
+                  alt={`Vejrikon for ${d.weekday}`}
+                  width={40}
+                  height={40}
+                />
                 <p className="font-bold text-2xl">
                   {tempDayC !== null ? tempDayC + "°C" : "--"}
                 </p>
