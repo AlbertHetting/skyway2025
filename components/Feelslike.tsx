@@ -32,11 +32,7 @@ function computeFeelsLikeDelta(
     score += 3;
   }
 
-  if (
-    condition === "snow" ||
-    condition === "sleet" ||
-    condition === "hail"
-  ) {
+  if (condition === "snow" || condition === "sleet" || condition === "hail") {
     score += 5;
   }
 
@@ -73,32 +69,38 @@ export default function FeelsLike({
     windSpeedMs
   );
 
-  const feelsLikeTemp =
-    wholeTemp !== null ? wholeTemp + feelsDelta : null;
-
+  const feelsLikeTemp = wholeTemp !== null ? wholeTemp + feelsDelta : null;
 
   return (
-    <main>
-      <div className="w-40 h-40 bg-white rounded-3xl">
-        {/* Header: Running + dynamic condition label */}
-        <div className="flex flex-row justify-center items-center gap-4 text-[#4D4D4D]">
+    <main role="region" aria-label="Vejr: Føles som temperatur">
+      <div className="w-40 h-40 bg-white rounded-3xl flex flex-col justify-center items-center">
+        {/* Header */}
+        <div
+          className="flex flex-row justify-center items-center gap-4 text-[#4D4D4D]"
+          aria-label="Føles som label"
+        >
           <h1 className="mt-2 ml-1 text-md font-bold">Føles som</h1>
         </div>
 
-       
-        <div className="flex flex-row justify-center mt-6">
-
-
-            <h1 className="text-[#4D4D4D] text-4xl font-bold">{feelsLikeTemp}<span>&#176;</span></h1>
-
-        </div>
-
-            <div className="text-[#4D4D4D] mt-3">
-          <h1 className="mt-2 text-lg text-center">
-            Akutel {wholeTemp}<span>&#176;</span>
+        {/* Feels like temperature */}
+        <div className="flex flex-row justify-center mt-6" aria-live="polite">
+          <h1 className="text-[#4D4D4D] text-4xl font-bold">
+            {feelsLikeTemp}
+            <span aria-hidden="true">&#176;</span>
           </h1>
         </div>
+
+        {/* Actual temperature */}
+        <div
+          className="text-[#4D4D4D] mt-3"
+          aria-label={`Aktuel temperatur: ${wholeTemp} grader`}
+        >
+          <h1 className="mt-2 text-lg text-center">
+            Aktuel {wholeTemp}
+            <span aria-hidden="true">&#176;</span>
+          </h1>
         </div>
+      </div>
     </main>
   );
 }

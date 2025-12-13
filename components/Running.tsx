@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import type { WeatherCondition } from "../app/dmi"; // adjust path if needed
 
@@ -8,19 +10,7 @@ type RunningProps = {
 };
 
 /**
- * Internal logic:
- *  - wind > 5 m/s + 1
- *  - wind > 10 m/s: +2
- *  - drizzle: +1
- *  - rain: +3
- *  - snow/sleet/hail: +4
- *  - temp > 25°C: +2
- * Then map score to label:
- *  0 -> Excellent
- *  1–3 -> Good
- *  4–5 -> Okay
- *  6–7 -> Bad
- *  8–10 -> Terrible
+ * Compute running label
  */
 function computeRunningLabel(
   temperatureC: number | null,
@@ -29,36 +19,14 @@ function computeRunningLabel(
 ): string {
   let score = 0;
 
-
-  if (typeof windSpeedMs === "number" && windSpeedMs > 5) {
-    score += 1;
-  }
-
-  if (typeof windSpeedMs === "number" && windSpeedMs > 10) {
-    score += 2;
-  }
-
-  if (condition === "drizzle") {
-    score += 1;
-  }
-
-  if (condition === "rain") {
-    score += 3;
-  }
-
-  if (
-    condition === "snow" ||
-    condition === "sleet" ||
-    condition === "hail"
-  ) {
+  if (typeof windSpeedMs === "number" && windSpeedMs > 5) score += 1;
+  if (typeof windSpeedMs === "number" && windSpeedMs > 10) score += 2;
+  if (condition === "drizzle") score += 1;
+  if (condition === "rain") score += 3;
+  if (condition === "snow" || condition === "sleet" || condition === "hail")
     score += 4;
-  }
+  if (typeof temperatureC === "number" && temperatureC > 25) score += 2;
 
-  if (typeof temperatureC === "number" && temperatureC > 25) {
-    score += 2;
-  }
-
-  // clamp
   if (score < 0) score = 0;
   if (score > 10) score = 10;
 
@@ -69,7 +37,7 @@ function computeRunningLabel(
   return "Meget Dårligt";
 }
 
-// Same icon mapping as your main dashboard
+// Icon mapping
 function getIconForCondition(condition?: WeatherCondition): string {
   switch (condition) {
     case "sunny":
@@ -102,21 +70,27 @@ export default function Running({
     condition,
     windSpeedMs
   );
-
   const conditionIcon = getIconForCondition(condition);
 
   const windText =
     typeof windSpeedMs === "number"
-      ? `Vind Hastighed up to ${windSpeedMs.toFixed(1)} m/s`
-      : "Wind speed unavailable";
+      ? `Vindhastighed op til ${windSpeedMs.toFixed(1)} m/s`
+      : "Vindhastighed ikke tilgængelig";
 
   return (
     <main>
-      <div className="w-40 h-40 bg-white rounded-3xl">
+      <div
+        className="w-40 h-40 bg-white rounded-3xl"
+        role="region"
+        aria-label="Løb widget: viser aktuelle forhold og anbefaling"
+      >
         {/* Header: Running + dynamic condition label */}
         <div className="flex flex-row justify-center items-center gap-12 text-[#4D4D4D]">
           <h1 className="mt-2 ml-1 text-md font-bold">Løb</h1>
-          <h1 className="mt-2 text-xs">
+          <h1
+            className="mt-2 text-xs"
+            aria-label={`Løbe anbefaling: ${runningLabel}`}
+          >
             {runningLabel}
           </h1>
         </div>
@@ -126,7 +100,7 @@ export default function Running({
           <Image
             className="mt-0"
             src="/WeatherTransIcons/Running.png"
-            alt="Running"
+            alt="Løbe ikon"
             width={80}
             height={80}
             priority
@@ -134,12 +108,12 @@ export default function Running({
         </div>
 
         {/* Dynamic wind text */}
-        <h1 className="text-[#4D4D4D] text-center text-xs mt-[-15]">
-          {windText.split("up to")[0]} {/* "Wind speeds " */}
-          <br />
-          {windText.includes("up to")
-            ? windText.split("up to")[1]
-            : windText}
+        <h1
+          className="text-[#4D4D4D] text-center text-xs mt-[-15]"
+          aria-label={windText}
+        >
+          {windText.split("op til")[0]} <br />
+          {windText.includes("op til") ? windText.split("op til")[1] : windText}
         </h1>
 
         {/* Bottom: current weather condition icon */}
@@ -150,7 +124,7 @@ export default function Running({
           <Image
             className="mt-[-4]"
             src={conditionIcon}
-            alt="condition"
+            alt={`Aktuelt vejr: ${condition ?? "ukendt"}`}
             width={30}
             height={30}
             priority
