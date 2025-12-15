@@ -48,7 +48,7 @@ export default function Onboarding() {
             className="flex flex-row items-center"
           >
             <Image
-              src="/UiIcons/Movewidget.png"
+              src="/UiIcons/MoveWidget.png"
               alt="Flyt widget ikon"
               width={120}
               height={20}
