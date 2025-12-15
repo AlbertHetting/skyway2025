@@ -11,7 +11,7 @@ type RunningProps = {
 
 /**
  * Compute running label
- */
+*/
 function computeRunningLabel(
   temperatureC: number | null,
   condition: WeatherCondition | undefined,
@@ -26,6 +26,7 @@ function computeRunningLabel(
   if (condition === "snow" || condition === "sleet" || condition === "hail")
     score += 4;
   if (typeof temperatureC === "number" && temperatureC > 25) score += 2;
+  if (typeof temperatureC === "number" && temperatureC <= 0) score += 2;
 
   if (score < 0) score = 0;
   if (score > 10) score = 10;
